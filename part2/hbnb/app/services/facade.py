@@ -1,5 +1,7 @@
 from app.persistence.repository import InMemoryRepository
 
+# ------------------------------------------------------------
+
 class HBnBFacade:
     def __init__(self):
         self.user_repo = InMemoryRepository()
@@ -15,8 +17,12 @@ class HBnBFacade:
         self.user_repo.add(user)
         return user
 
+# ------------------------------------------------------------
+
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
+
+# ------------------------------------------------------------
 
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
@@ -29,13 +35,19 @@ class HBnBFacade:
         self.amenity_repo.add(amenity)
         return amenity
 
+# ------------------------------------------------------------
+
     def get_amenity(self, amenity_id):
     # Placeholder for logic to retrieve an amenity by ID
         return self.amenity_repo.get(amenity_id)
 
+# ------------------------------------------------------------
+
     def get_all_amenities(self):
     # Placeholder for logic to retrieve all amenities
         return self.amenity_repo.get_all()
+
+# ------------------------------------------------------------
 
     def update_amenity(self, amenity_id, amenity_data):
     # Placeholder for logic to update an amenity
@@ -57,13 +69,19 @@ class HBnBFacade:
         self.place_repo.add(place)
         return place
 
+# ------------------------------------------------------------
+
     def get_place(self, place_id):
     # Placeholder for logic to retrieve a place by ID, including associated owner and amenities
         return self.place_repo.get(place_id)
 
+# ------------------------------------------------------------
+
     def get_all_places(self):
     # Placeholder for logic to retrieve all places
         return self.place_repo.get_all()
+
+# ------------------------------------------------------------
 
     def update_place(self, place_id, place_data):
     # Placeholder for logic to update a place
@@ -76,3 +94,5 @@ class HBnBFacade:
 
         self.place_repo.update(place)
         return 
+
+# ------------------------------------------------------------
