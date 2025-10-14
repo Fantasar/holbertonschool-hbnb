@@ -43,7 +43,7 @@ class HBnBFacade:
         if not amenity:
             return None
         
-        for key, value in amenity_data.item():
+        for key, value in amenity_data.items():
             setattr(amenity, key, value)
 
         self.amenity_repo.update(amenity)
@@ -51,7 +51,28 @@ class HBnBFacade:
 
 # ---------- PLACE METHODS PLACE ----------
 
-    # Placeholder method for fetching a place by ID
+    def create_place(self, place_data):
+    # Placeholder for logic to create a place, including validation for price, latitude, and longitude
+        place = Place(**place_data)
+        self.place_repo.add(place)
+        return place
+
     def get_place(self, place_id):
-        # Logic will be implemented in later tasks
-        pass
+    # Placeholder for logic to retrieve a place by ID, including associated owner and amenities
+        return self.place_repo.get(place_id)
+
+    def get_all_places(self):
+    # Placeholder for logic to retrieve all places
+        return self.place_repo.get_all()
+
+    def update_place(self, place_id, place_data):
+    # Placeholder for logic to update a place
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        
+        for key, value in place_data.items():
+            setattr(place, key, value)
+
+        self.place_repo.update(place)
+        return 
