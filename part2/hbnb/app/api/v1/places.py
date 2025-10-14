@@ -79,7 +79,24 @@ class PlaceResource(Resource):
             return {'error': 'Place not found'}, 404
         return {
             'id': place.id,
-            'title': place.title
+            'title': place.title,
+            'descritption': getattr(place, 'description', None),
+            'price': getattr(place, 'price', None),
+            'latitude': getattr(place, 'latitude', None),
+            'longitude': getattr(place, 'longitude', None),
+            'owner': {
+                'id': place.owner.id,
+                'first_name': place.owner.first_name,
+                'last_name': place.owner.last_name,
+                'email': place.owner.email
+            }
+            if getattr(place, 'owner', None) else None,
+            'amenities': [
+                {'id': a.id,
+                'name': a.name
+                }
+                for a in getattr(place, 'amenities', [])
+            ]
         }, 200
 
 # ------------------------------------------------------------
@@ -98,7 +115,7 @@ class PlaceResource(Resource):
 
         return {
             'id': updated_place.id,
-            'name': updated_place.name
+            'title': updated_place.title
         }, 200
 
 # ------------------------------------------------------------
