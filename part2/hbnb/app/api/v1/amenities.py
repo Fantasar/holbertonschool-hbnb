@@ -2,6 +2,8 @@ from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from app.services.facade import HBnBFacade
 
+# ------------------------------------------------------------
+
 facade = HBnBFacade()
 api = Namespace('amenities', description='Amenity operations')
 
@@ -9,6 +11,8 @@ api = Namespace('amenities', description='Amenity operations')
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
 })
+
+# ------------------------------------------------------------
 
 @api.route('/')
 class AmenityList(Resource):
@@ -28,6 +32,8 @@ class AmenityList(Resource):
             'name': new_amenity.name
         }, 201
 
+# ------------------------------------------------------------
+
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
         """Retrieve a list of all amenities"""
@@ -39,6 +45,7 @@ class AmenityList(Resource):
             }for a in amenities
         ], 200
 
+# ------------------------------------------------------------
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
@@ -53,7 +60,8 @@ class AmenityResource(Resource):
             'id': amenity.id,
             'name': amenity.name
         }, 200
-        
+
+# ------------------------------------------------------------
 
     @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
@@ -71,3 +79,5 @@ class AmenityResource(Resource):
             'id': updated_amenity.id,
             'name': updated_amenity.name
         }, 200
+
+# ------------------------------------------------------------
