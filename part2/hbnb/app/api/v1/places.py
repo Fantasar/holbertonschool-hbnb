@@ -66,6 +66,9 @@ place_model = api.model(
             fields.String,
             required=True,
             description="List of amenities ID's"
+        ),
+        'reviews': fields.List(
+            
         )
     }
 )
