@@ -115,7 +115,10 @@ class PlaceResource(Resource):
 
         return {
             'id': updated_place.id,
-            'title': updated_place.title
+            'title': updated_place.title,
+            'price': update_place.price,
+            'latitude': update_place.latitude,
+            'logitude': update_place.longitude
         }, 200
 
 # ------------------------------------------------------------
