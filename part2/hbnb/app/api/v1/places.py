@@ -22,18 +22,49 @@ api = Namespace('places', description='Place operations')
 
 
 # Informations sur les commodités associées à un lieu
-amenity_model = api.model('PlaceAmenity', {
-    'id': fields.String(description='Amenity ID'),
-    'name': fields.String(description='Name of the amenity')
-})
+amenity_model = api.model(
+    'PlaceAmenity',
+    {
+        'id': fields.String(description='Amenity ID'),
+        'name': fields.String(description='Name of the amenity')
+    }
+)
+
+# ------------------------------------------------------------
 
 # Informations sur le propriétaire du lieu
-user_model = api.model('PlaceUser', {
-    'id': fields.String(description='User ID'),
-    'first_name': fields.String(description='First name of the owner'),
-    'last_name': fields.String(description='Last name of the owner'),
-    'email': fields.String(description='Email of the owner')
-})
+user_model = api.model(
+    'PlaceUser',
+    {
+        'id': fields.String(description='User ID'),
+        'first_name': fields.String(
+            description='First name of the owner'
+        ),
+        'last_name': fields.String(
+            description='Last name of the owner'
+        ),
+        'email': fields.String(
+            description='Email of the owner'
+        )
+    }
+)
+
+# ------------------------------------------------------------
+
+# Ajout du modèle pour les avis liés à un lieu
+review_model = api.model(
+    'PlaceReview',
+    {
+        'id': fields.String(description='Review ID'),
+        'text': fields.String(description='Text of the review'),
+        'rating': fields.Integer(
+            description='Rating of the place (1-5)'
+        ),
+        'user_id': fields.String(description='ID of the user')
+    }
+)
+
+# ------------------------------------------------------------
 
 # Modèle principal pour un lieu
 place_model = api.model(
@@ -62,19 +93,23 @@ place_model = api.model(
             required=True,
             description='ID of the owner'
         ),
+        'owner': fields.Nested(
+            user_model,
+            description='Owner of the place'
+        ),
         'amenities': fields.List(
-            fields.String,
-            required=True,
-            description="List of amenities ID's"
+            fields.Nested(amenity_model),
+            description='List of amenities'
         ),
         'reviews': fields.List(
-            
+            fields.Nested(review_model),
+            description='List of reviews'
         )
     }
 )
 
-
 # ------------------------------------------------------------
+
 
 @api.route('/')
 class PlaceList(Resource):
