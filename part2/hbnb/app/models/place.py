@@ -92,6 +92,7 @@ class Place(BaseModel):
         return self.__owner
 # verifie que le propriétaire est un uilisateur valide
 
+    @owner.setter
     def owner(self, value):
         if not isinstance(value, User):
             raise TypeError("Le propriétaire doit être un utilisateur valide")
