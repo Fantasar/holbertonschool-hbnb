@@ -87,7 +87,7 @@ class User(BaseModel):
         # Hashage du mot de passe
         self.__mot_de_passe = hashlib.sha256(
             valeur.encode('utf-8')).hexdigest()
-        self.save()
+        self.save()  # Sauvegarde les modifications
 # ------------------------------------------------------------------------
 
     @property
@@ -100,7 +100,7 @@ class User(BaseModel):
         if not isinstance(valeur, bool):
             raise TypeError("admin doit etre en booléen")
         self.__is_admin = valeur
-        self.save()
+        self.save()  # Sauvegarde les modifications
 # ------------------------------------------------------------------------
     # Ajout de place et review
 
