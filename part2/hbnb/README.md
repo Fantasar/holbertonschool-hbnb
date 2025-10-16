@@ -1,6 +1,4 @@
-#---------------------------------------------------------------------#
-#--------------- 📘 **Description du projet Hbnb** -------------------#
-#---------------------------------------------------------------------#
+📘 **Description du projet Hbnb** :
 
 Voici le README du projet Holberton School consistant à construire une plateforme de location : Hbnb.
   Cette deuxième partie du projet porte sur les API RESTful, avec notamment l’implémentation des modèles de classes, 
@@ -11,9 +9,8 @@ et le travail sur l’interaction entre le modèle Facade et les différentes AP
   - **Place** : contient les logements disponibles sur la plateforme.
   - **Review** : contient les avis des utilisateurs.
 
-#------------------------------------------------------------------#
-#--------------- **Auteurs et répartition du travail** ------------#
-#------------------------------------------------------------------#
+**Auteurs et répartition du travail** :
+
 
   Afin de faciliter la compréhension du projet, le choix de la langue s’est porté sur le **français** pour les commentaires et 
 les descriptions des différentes fonctions, classes ou modules.
@@ -34,9 +31,7 @@ Le travail a été réalisé par deux étudiants dont les informations sont pré
 
   - **Travaux réalisés** : Développement des différentes API, implémentation du modèle Facade et documentation du projet (README).
 
-#----------------------------------------------------------------------#
-#--------------- 📂 **Architecture des dossiers** --------------------#
-#---------------------------------------------------------------------#
+📂 **Architecture des dossiers** :
 
 Afin de rendre la plateforme plus robuste et plus facile à comprendre, nous avons choisi d’organiser l’architecture du projet à travers plusieurs dossiers, présentés ci-dessous :
 
@@ -57,26 +52,22 @@ Explication des dossiers :
   - **requirements.txt** : liste les dépendances Python nécessaires au projet.
   - **README.md** : contient toutes les informations utiles au fonctionnement de la plateforme.
 
-#------------------------------------------------------------------#
-#--------------- **Configuration de l’environnement** -------------#
-#------------------------------------------------------------------#
+**Configuration de l’environnement** :
 
   Afin que le serveur fonctionne correctement certaines données présente dans le fichier
 requirements doivent être installer :
 
 Installation des dépendances :
 
-## pip install -r requirements.txt ##
+Photo de : pip install -r requirements.txt
 
 Lancement du serveur Flask :
 
-## flask run ##
+Photos de : flask run 
 
 (Ajouter ici des captures d’écran ou des extraits de commandes)
 
-#----------------------------------------------------------------------#
-#--------------- 🔒 **Sécurisation des données utilisateur** ----------#
-#----------------------------------------------------------------------#
+🔒 **Sécurisation des données utilisateur** :
 
   Lors du développement de la plateforme, une réflexion a été menée sur la sécurisation 
 des données sensibles des utilisateurs, notamment les mots de passe.
@@ -89,9 +80,7 @@ Pour cela, nous utilisons plusieurs outils intégrés à **Flask** :
   - **itsdangerous** : gère la génération et la vérification des 
 signatures cryptographiques (tokens, cookies, etc.).
 
-#-------------------------(--------------------------------------------#
-#--------------- 🧪 **Exemples de cas d’utilisation** ----------------#
-#---------------------------------------------------------------------#
+🧪 **Exemples de cas d’utilisation** : 
 
   Dans cette section, vous trouverez différents tests réalisés pour vérifier le fonctionnement des API.
 Voici quelques codes de réponse HTTP actuellement pris en compte, ainsi que ceux à implémenter à l’avenir :
@@ -108,6 +97,7 @@ Voici quelques codes de réponse HTTP actuellement pris en compte, ainsi que ceu
 
   - **500 / 502 / 503** : Erreurs serveur.
 
-504 : Délai d’attente dépassé.
+  - **504** : Délai d’attente dépassé.
 
 (Insérer ici des captures d’écran illustrant les réponses de l’API.)
+
