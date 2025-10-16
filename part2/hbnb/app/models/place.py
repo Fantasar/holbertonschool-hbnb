@@ -1,5 +1,7 @@
 from app.models.base_model import BaseModel
 from app.models.user import User
+from app.models.review import Review
+from app.models.amenity import Amenity
 
 
 class Place(BaseModel):
@@ -21,12 +23,11 @@ class Place(BaseModel):
 
     @title.setter
     def title(self, value):
-        if not value:
-            raise TypeError("il faut un titre")
-
-        if len(value) > 100:
-            raise TypeError("il ne faut pas dépasser les 100 caractères")
-        self.__title = value
+        if not value or not value.strip():
+            raise ValueError("Le titre du lieu ne peut pas être vide.")
+        if len(value.strip()) > 100:
+            raise ValueError("Le titre ne doit pas dépasser 100 caractères.")
+        self.__title = value.strip()
         self.save()
 # ------------------------------------------------------------------------
 
@@ -36,7 +37,10 @@ class Place(BaseModel):
 
     @description.setter
     def description(self, value):
-        self.__description = value
+        if value is not None:
+            self.__description = value.strip()
+        else:
+            self.__description = None
         self.save()
 # ------------------------------------------------------------------------
 
@@ -46,11 +50,11 @@ class Place(BaseModel):
 
     @price.setter
     def price(self, value):
-        if type(value) not in (int, float):
-            raise TypeError("le prix doit être un nombre")
-        if value < 0:
-            raise ValueError("Le prix doit être positif")
-        self.__price = value
+        if not isinstance(value, (int, float)):
+            raise TypeError("Le prix doit être un nombre.")
+        if value <= 0:
+            raise ValueError("Le prix doit être une valeur positive.")
+        self.__price = float(value)
         self.save()
 # ------------------------------------------------------------------------
 
@@ -60,13 +64,12 @@ class Place(BaseModel):
 
     @latitude.setter
     def latitude(self, value):
-        if type(value) not in (int, float):
-            raise TypeError("La latitude doit être un nombre")
-
-        if value < -90.0 or value > 90.0:
-            raise TypeError(
-                "La latitude doit être comprise entre -90.0 et 90.0")
-        self.__latitude = value
+        if not isinstance(value, (int, float)):
+            raise TypeError("La latitude doit être un nombre.")
+        if not -90.0 <= value <= 90.0:
+            raise ValueError(
+                "La latitude doit être comprise entre -90.0 et 90.0.")
+        self.__latitude = float(value)
         self.save()
 # ------------------------------------------------------------------------
 
@@ -76,13 +79,12 @@ class Place(BaseModel):
 
     @longitude.setter
     def longitude(self, value):
-        if type(value) not in (int, float):
-            raise TypeError("La longitude doit être un nombre")
-
-        if value < -180.0 or value > 180.0:
-            raise TypeError(
-                "La longitude doit être comprise entre -180.0 et 180.0")
-        self.__longitude = value
+        if not isinstance(value, (int, float)):
+            raise TypeError("La longitude doit être un nombre.")
+        if not -180.0 <= value <= 180.0:
+            raise ValueError(
+                "La longitude doit être comprise entre -180.0 et 180.0.")
+        self.__longitude = float(value)
         self.save()
 # ------------------------------------------------------------------------
 # Definir propriétaire de la place
@@ -103,16 +105,16 @@ class Place(BaseModel):
 
     def classify_prices(self):
         if self.__price <= 40:
-            return "Economique"
+            return "économique"
         elif self.__price <= 80:
-            return "Moyen"
+            return "Business"
         else:
-            return "cher"
+            return "haut de gamme"
 # ------------------------------------------------------------------------
 
-    def delete_offer(self, value):
-        # Dictionnaire pour faire le lien entre les noms et les attributs privé
-        correspondance_fields = {
+    def delete_offer(self, field_name):
+        """Supprime un attribut du lieu s'il existe."""
+        fields = {
             "title": "_Place__title",
             "description": "_Place__description",
             "price": "_Place__price",
@@ -120,24 +122,28 @@ class Place(BaseModel):
             "longitude": "_Place__longitude",
             "owner": "_Place__owner"
         }
-# Si le champ existe dans le dictionnaire récupérer le nom de l'attribut privé
-        if value in correspondance_fields:
-            private_attribute_name = correspondance_fields[value]
 
-            # Vérifie si l'objet possède cet attribut
-            if hasattr(self, private_attribute_name):
-                delattr(self, private_attribute_name)
-                self.save()  # On met à jour la date de modification
-                print(f"Le champ '{value}' a bien été supprimé.")
-            else:
-                print(f"{value} n'a pas pu être supprimé")
+        if field_name not in fields:
+            raise ValueError(f"Le champ '{field_name}' n'existe pas.")
+
+        private_attr = fields[field_name]
+        if hasattr(self, private_attr):
+            delattr(self, private_attr)
             self.save()
+        else:
+            raise AttributeError(
+                f"Impossible de supprimer le champ '{field_name}'.")
 # ------------------------------------------------------------------------
 
     def add_review(self, review):
-        """Ajouter un avis sur le lieu."""
+        if not isinstance(review, Review):
+            raise TypeError("L'objet ajouté doit être une instance de Review.")
         self.reviews.append(review)
+        self.save()
 
     def add_amenity(self, amenity):
-        """Ajoutez une commodité à l’endroit."""
+        if not isinstance(amenity, Amenity):
+            raise TypeError(
+                "L'objet ajouté doit être une instance de Amenity.")
         self.amenities.append(amenity)
+        self.save()
