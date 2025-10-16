@@ -10,6 +10,8 @@ class Review(BaseModel):
         self.rating = rating
         self.place = place
         self.user = user
+        place.add_review(self)
+        user.add_review(self)
 # ------------------------------------------------------------------------
 
     @property
@@ -18,11 +20,10 @@ class Review(BaseModel):
 
     @text.setter
     def text(self, value):
-        if not value:
-            raise TypeError("Le texte doit contenir un avis")
-        else:
-            self.__text = value
-            self.save()
+        if not value or not value.strip():
+            raise ValueError("Le texte de l'avis ne peut pas être vide.")
+        self.__text = value.strip()
+        self.save()
 # ------------------------------------------------------------------------
 
     @property
@@ -31,10 +32,10 @@ class Review(BaseModel):
 
     @rating.setter
     def rating(self, value):
-        if type(value) not in (float, int):
-            raise TypeError("la note doit etre un nombre")
-        if value < 0 or value > 5:
-            raise TypeError("la note doit etre comprise entre 0 et 5")
+        if not isinstance(value, (int, float)):
+            raise TypeError("La note doit être un nombre.")
+        if not 1 <= value <= 5:
+            raise ValueError("La note doit être comprise entre 1 et 5.")
         self.__rating = value
         self.save()
 # ------------------------------------------------------------------------
