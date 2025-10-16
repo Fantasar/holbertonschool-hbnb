@@ -25,5 +25,5 @@ class BaseModel:
     def get_created_at(self):
         return self.created_at
 
-    def get_update(self):
+    def get_updated_at(self):
         return self.updated_at
