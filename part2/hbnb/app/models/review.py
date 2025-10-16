@@ -1,6 +1,5 @@
 from app.models.base_model import BaseModel
 from app.models.user import User
-from app.models.place import Place
 
 
 class Review(BaseModel):
@@ -47,7 +46,7 @@ class Review(BaseModel):
 
     @place.setter
     def place(self, value):
-        if not isinstance(value, Place):
+        if not isinstance(value, BaseModel) or value.__class__.__name__ != "Place":
             raise TypeError("La place doit etre associé à un lieu valide")
         else:
             self.__place = value
