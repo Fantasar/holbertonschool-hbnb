@@ -1,7 +1,4 @@
 from app.models.base_model import BaseModel
-from app.models.user import User
-from app.models.place import Place
-from app.models.review import Review
 
 
 class Amenity(BaseModel):
@@ -19,12 +16,13 @@ class Amenity(BaseModel):
         if not value:
             raise TypeError("il faut indiquer le nom de l'équipement")
 
-        if type(value) not in (str):
+        if isinstance(value, str):
             raise TypeError("L'équipement doit être une chaine de caractères")
 
         if len(value) > 50:
             raise TypeError(
-                "Le nom de l'équipement ne peut pas depasser 50 caractères")
-        else:
-            self.__name = value
-            self.save()
+                "Le nom de l'équipement ne peut pas dépasser 50 caractères."
+            )
+
+        self.__name = value
+        self.save()
