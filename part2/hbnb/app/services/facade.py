@@ -8,6 +8,11 @@ from app.models.amenity import Amenity
 # Classe de façade principale : interface entre API et logique
 # ------------------------------------------------------------
 
+_user_repo = InMemoryRepository()
+_place_repo = InMemoryRepository()
+_review_repo = InMemoryRepository()
+_amenity_repo = InMemoryRepository()
+
 
 class HBnBFacade:
 
@@ -22,10 +27,10 @@ class HBnBFacade:
         Initialise les différents dépôts en mémoire.
         """
 
-        self.user_repo = InMemoryRepository()
-        self.place_repo = InMemoryRepository()
-        self.review_repo = InMemoryRepository()
-        self.amenity_repo = InMemoryRepository()
+        self.user_repo = _user_repo
+        self.place_repo = _place_repo
+        self.review_repo = _review_repo
+        self.amenity_repo = _amenity_repo
 
 # ----------------------------------------
 # ---------- USER METHODS ----------------
@@ -38,7 +43,22 @@ class HBnBFacade:
         """
 
         user = User(**user_data)
+        user.save()
         self.user_repo.add(user)
+        return user
+
+# ------------------------------------------------------------
+
+    def update_user(self, user_id, user_data):
+
+        """
+        Fonction pour mettre a jour un utilisateur.
+        """
+
+        user = self.get_user(user_id)
+        # Mettez à jour les attributs
+        user.save()
+        self.user_repo.update(user_id, user)
         return user
 
 # ------------------------------------------------------------
@@ -110,7 +130,7 @@ class HBnBFacade:
         for key, value in amenity_data.items():
             setattr(amenity, key, value)
 
-        self.amenity_repo.update(amenity)
+        self.amenity_repo.update(amenity_id, amenity)
         return amenity
 
 # -----------------------------------------
@@ -123,7 +143,16 @@ class HBnBFacade:
         Crée un nouveau lieu avec ses attributs de base.
         """
 
+        # Vérifier que le owner existe
+        owner_id = place_data.get('owner_id')
+        owner = self.user_repo.get(owner_id)
+
+        if not owner:
+            raise ValueError(f"Utilisateur avec l'ID {owner_id} introuvable")
+        
+        place_data['owner'] = owner
         place = Place(**place_data)
+        place.save()
         self.place_repo.add(place)
         return place
 
@@ -152,18 +181,24 @@ class HBnBFacade:
     def update_place(self, place_id, place_data):
 
         """
-        Met à jour les informations d’un lieu existant.
+        Met à jour les informations d'un lieu existant.
         """
 
         place = self.place_repo.get(place_id)
         if not place:
             return None
 
-        for key, value in place_data.items():
-            setattr(place, key, value)
+        allowed_fields = ['title', 'description', 'price', 'latitude', 'longitude']
 
-        self.place_repo.update(place)
-        return place
+        try:
+            for key in allowed_fields:
+                if key in place_data:
+                    setattr(place, key, place_data[key])
+            place.save()
+            self.place_repo.update(place_id, place)
+            return place
+        except (ValueError, TypeError) as e:
+            raise e
 
 # ------------------------------------------
 # ---------- REVIEW METHODS ----------------
@@ -175,7 +210,24 @@ class HBnBFacade:
         Crée un nouvel avis et l'ajoute au dépôt.
         """
 
-        review = Review(**review_data)
+        user_id = review_data.get('user_id')
+        place_id = review_data.get('place_id')
+
+        user = self.user_repo.get(user_id)
+        place = self.place_repo.get(place_id)
+
+        if not user:
+            raise ValueError(f"Utilisateur avec l'ID {user_id} introuvable")
+        if not place:
+            raise ValueError(f"Lieu avec l'ID {place_id} introuvable")
+        
+        review = Review(
+            text=review_data.get("text"),
+            rating=review_data.get("rating"),
+            place=place,
+            user=user
+        )
+
         self.review_repo.add(review)
         return review
 
