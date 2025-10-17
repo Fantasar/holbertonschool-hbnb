@@ -68,7 +68,6 @@ class ReviewList(Resource):
             'rating': new_review.rating,
             'user_id': new_review.user_id,
             'place_id': new_review.place_id,
-            'created_at': getattr(new_review, 'created_at', None)
         }, 201
 
 # ------------------------------------------------------------
