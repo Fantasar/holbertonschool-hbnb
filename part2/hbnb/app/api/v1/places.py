@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from app.services.facade import HBnBFacade
+from app.models.review import Review
 
 # ------------------------------------------------------------
 # Fichier : places.py
@@ -161,7 +162,7 @@ class PlaceList(Resource):
                 'title': p.title,
                 'price': p.price,
                 'owner_id': p.owner_id
-            }for p in place
+            }for p in places
         ], 200
 
 # ------------------------------------------------------------
@@ -205,8 +206,8 @@ class PlaceResource(Resource):
             if getattr(place, 'owner', None) else None,
             'amenities': [
                 {
-                    'id': a.id,
-                    'name': a.name
+                    'id': a['id'] if isinstance(a, dict) else a.id,
+                    'name': a['name'] if isinstance(a, dict) else a.name
                 }
                 for a in getattr(place, 'amenities', [])
             ]
