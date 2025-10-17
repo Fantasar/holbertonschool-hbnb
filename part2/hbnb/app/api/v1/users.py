@@ -137,6 +137,7 @@ class UserResource(Resource):
     @api.expect(user_model, validate=True)
     @api.response(200, 'User updated successfully')
     @api.response(404, 'User not found')
+    @api.response(400, 'Invalid input or email already exists')
     def put(self, user_id):
 
         """
@@ -154,11 +155,25 @@ class UserResource(Resource):
 
         # Met à jour les champs avec les nouvelles données
         data = api.payload
-        for key, value in data.items():
-            setattr(user, key, value)
+
+        # Vérifier si l'email est modifié et s'il existe déjà
+        if 'email' in data and data['email'] != user.email:
+            existing_user = facade.get_user_by_email(data['email'])
+            if existing_user:
+                return {'error': 'Email already registered'}, 400
+
+        # Mettre à jour uniquement les champs autorisés
+        allowed_fields = ['first_name', 'last_name', 'email']
+        for key in allowed_fields:
+            if key in data:
+                setattr(user, key, data[key])
+
+        # Gérer le password séparément avec hashing
+        if 'passworld' in data:
+            user.password = data['passworld']
 
         # Enregistre les modifications
-        facade.user_repo.update(user)
+        facade.user_repo.update(user_id, user)
         return {
             'id': user.id,
             'first_name': user.first_name,
