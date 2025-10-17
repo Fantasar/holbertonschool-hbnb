@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class Repository(ABC):
     @abstractmethod
     def add(self, obj):
-        pass
+        self._storage[obj.id] = obj
 
     @abstractmethod
     def get(self, obj_id):
@@ -40,14 +40,22 @@ class InMemoryRepository(Repository):
     def get_all(self):
         return list(self._storage.values())
 
-    def update(self, obj_id, data):
-        obj = self.get(obj_id)
-        if obj:
-            obj.update(data)
+    def update(self, obj_id, obj):
+        if obj_id in self._storage:
+            self._storage[obj_id] = obj
+            obj.save()
+            return obj
+        return None
 
     def delete(self, obj_id):
+
         if obj_id in self._storage:
             del self._storage[obj_id]
+            return True
+        return False
 
     def get_by_attribute(self, attr_name, attr_value):
-        return next((obj for obj in self._storage.values() if getattr(obj, attr_name) == attr_value), None)
+        for obj in self._storage.values():
+            if hasattr(obj, attr_name) and getattr(obj, attr_name) == attr_value:
+                return obj
+        return None
