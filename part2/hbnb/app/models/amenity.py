@@ -16,7 +16,7 @@ class Amenity(BaseModel):
         if not value:
             raise TypeError("il faut indiquer le nom de l'équipement")
 
-        if isinstance(value, str):
+        if not isinstance(value, str):
             raise TypeError("L'équipement doit être une chaine de caractères")
 
         if len(value) > 50:

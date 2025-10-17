@@ -32,7 +32,7 @@ class User(BaseModel):
         elif len(value) > 50:
             raise TypeError("le nom doit contenir moins de 50 caractères")
         self.__last_name = value  # Stocke le nom
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
@@ -47,7 +47,7 @@ class User(BaseModel):
         elif len(value) > 50:
             raise TypeError("le prenom doit contenir moins de 50 caractéres")
         self.__first_name = value
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
@@ -62,15 +62,16 @@ class User(BaseModel):
             raise ValueError("Format email non respecté")
 
         if value in User.__existing_emails:
-            raise ValueError("Cet email est déjà utilisé.")
+            if not hasattr(self, "_User__email") or self.__email != value:
+                raise ValueError("Cet email est déjà utilisé.")
 
         # Si l'utilisateur a déjà un email le retirer des emails existants
-        if hasattr(self, "_User__email"):
+        if hasattr(self, "_User__email") and self.__email != value:
             User.__existing_emails.discard(self.__email)
 
         self.__email = value
         User.__existing_emails.add(value)
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
@@ -85,20 +86,20 @@ class User(BaseModel):
                 "Le mot de passe doit contenir au moins 6 caractères.")
         # Hashage du mot de passe
         self.__password = hashlib.sha256(value.encode('utf-8')).hexdigest()
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
     def is_admin(self):
         return self.__is_admin
-# ajout de admin en valeur bool
+    # ajout de admin en valeur bool
 
     @is_admin.setter
     def is_admin(self, value):
         if not isinstance(value, bool):
             raise TypeError("Le champ 'is_admin' doit être un booléen.")
         self.__is_admin = value
-        self.save()  # Met à jour updated_at
+
 # ------------------------------------------------------------------------
     # Ajout de place et review
 

@@ -3,14 +3,22 @@ from app.models.user import User
 
 
 class Review(BaseModel):
-    def __init__(self, text, rating, place, user):
-        super().__init__()  # Appelle le constructeur de la classe BaseModel
+    def __init__(self, text=None, rating=None, place=None, user=None, **kwargs):
+        super().__init__(**kwargs)  # Appelle le constructeur de la classe BaseModel
         self.text = text
         self.rating = rating
         self.place = place
         self.user = user
-        place.add_review(self)
-        user.add_review(self)
+
+
+    @property
+    def user_id(self):
+        return self.user.id if self.user else None
+
+    @property
+    def place_id(self):
+        return self.place.id if self.place else None
+
 # ------------------------------------------------------------------------
 
     @property

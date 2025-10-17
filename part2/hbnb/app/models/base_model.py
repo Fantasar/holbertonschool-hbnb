@@ -12,13 +12,6 @@ class BaseModel:
         """Mettre à jour le timestamp updated_at chaque fois que l’objet est modifié"""
         self.updated_at = datetime.now()
 
-    def update(self, data):
-        """Mettre à jour les attributs de l’objet en fonction du dictionnaire fourni"""
-        for key, value in data.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-        self.save()  # Mettre à jour le timestamp updated_at
-
     def get_id(self):
         return self.id
 

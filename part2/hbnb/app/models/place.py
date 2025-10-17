@@ -4,16 +4,25 @@ from app.models.amenity import Amenity
 
 
 class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude, longitude, owner_id, owner=None, reviews=None, amenities=None):
         super().__init__()  # Appelle le constructeur de la classe BaseModel
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
-        self.reviews = []
-        self.amenities = []
+        self.owner_id = owner_id
+
+        #Convertir le dict owner en objet User si nécessaire
+        if owner is not None:
+            if isinstance(owner, dict):
+                owner = User(**owner)
+            self.owner = owner
+        else:
+            self.owner = None
+
+        self.reviews = reviews or []
+        self.amenities = amenities or []
 # ------------------------------------------------------------------------
 
     @property
@@ -27,7 +36,7 @@ class Place(BaseModel):
         if len(value.strip()) > 100:
             raise ValueError("Le titre ne doit pas dépasser 100 caractères.")
         self.__title = value.strip()
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
@@ -40,7 +49,7 @@ class Place(BaseModel):
             self.__description = value.strip()
         else:
             self.__description = None
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
@@ -54,7 +63,7 @@ class Place(BaseModel):
         if value <= 0:
             raise ValueError("Le prix doit être une valeur positive.")
         self.__price = float(value)
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
@@ -69,7 +78,7 @@ class Place(BaseModel):
             raise ValueError(
                 "La latitude doit être comprise entre -90.0 et 90.0.")
         self.__latitude = float(value)
-        self.save()
+
 # ------------------------------------------------------------------------
 
     @property
@@ -84,7 +93,7 @@ class Place(BaseModel):
             raise ValueError(
                 "La longitude doit être comprise entre -180.0 et 180.0.")
         self.__longitude = float(value)
-        self.save()
+
 # ------------------------------------------------------------------------
 # Definir propriétaire de la place
 
@@ -98,7 +107,7 @@ class Place(BaseModel):
         if not isinstance(value, User):
             raise TypeError("Le propriétaire doit être un utilisateur valide")
         self.__owner = value
-        self.save()
+
 # ------------------------------------------------------------------------
 # Classe le prix de la place
 
@@ -128,7 +137,7 @@ class Place(BaseModel):
         private_attr = fields[field_name]
         if hasattr(self, private_attr):
             delattr(self, private_attr)
-            self.save()
+
         else:
             raise AttributeError(
                 f"Impossible de supprimer le champ '{field_name}'.")
