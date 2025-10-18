@@ -21,13 +21,13 @@ Le travail a été réalisé par deux étudiants dont les informations sont pré
 
 👨‍💻 **Développeur 01** : Abdelrahman Azhar
 
-  - **Lien GitHub** : (à compléter)
+  - **Lien GitHub** : https://github.com/NO6B
 
   - **Travaux réalisés** : Conception de l’architecture du projet et implémentation des différentes classes.
 
 👨‍💻 **Développeur 02** : Lapique Philippe
 
-  - **Lien GitHub** : (à compléter)
+  - **Lien GitHub** : https://github.com/Fantasar
 
   - **Travaux réalisés** : Développement des différentes API, implémentation du modèle Facade et documentation du projet (README).
 
@@ -37,7 +37,8 @@ Afin de rendre la plateforme plus robuste et plus facile à comprendre, nous avo
 
 **Arborescence du projet** :
 
-(Ajouter ici une capture d’écran ou un schéma de l’arborescence des dossiers)
+<img width="346" height="546" alt="Architecture des dossiers" src="https://github.com/user-attachments/assets/005c9a99-90bc-4acb-8c82-9477a77c420f" />
+
 
 Explication des dossiers :
 
@@ -59,13 +60,11 @@ requirements doivent être installer :
 
 Installation des dépendances :
 
-Photo de : pip install -r requirements.txt
+Commande à intégrer dans le terminal : pip install -r requirements.txt
 
 Lancement du serveur Flask :
 
-Photos de : flask run 
-
-(Ajouter ici des captures d’écran ou des extraits de commandes)
+Commande à intégrer dans le terminal : flask run 
 
 🔒 **Sécurisation des données utilisateur** :
 
@@ -131,6 +130,7 @@ Voici quelques codes de réponse HTTP actuellement pris en compte, ainsi que ceu
 **Récupération de la liste des équipeent :**
 
 <img width="1399" height="643" alt="Récupération de la liste des équipements" src="https://github.com/user-attachments/assets/93b0a722-7490-43ed-85d5-671d67db67df" />
+
 
 
 
