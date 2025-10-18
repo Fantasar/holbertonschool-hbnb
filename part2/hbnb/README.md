@@ -99,5 +99,40 @@ Voici quelques codes de réponse HTTP actuellement pris en compte, ainsi que ceu
 
   - **504** : Délai d’attente dépassé.
 
-(Insérer ici des captures d’écran illustrant les réponses de l’API.)
+**Création d'un nouvelle Utilisateur :** 
+
+<img width="1396" height="566" alt="Création d'un comptre Réussite" src="https://github.com/user-attachments/assets/d3084fbb-3506-4ca6-a104-2619e4cbb679" />
+
+<img width="1398" height="562" alt="Création d'un compte Code erreur " src="https://github.com/user-attachments/assets/4351fda4-b778-4ef6-bf51-538e25c12782" />
+
+**Récupération de la liste des utilisateur :**
+
+<img width="1391" height="666" alt="Récupération d'une liste d'utilisateur" src="https://github.com/user-attachments/assets/a28fdba4-9e8a-45b2-b34f-0eda0d0b1171" />
+
+**Création d'une annonce pour un logement :**
+
+<img width="1387" height="830" alt="Création d'une annonce de logement Réussite" src="https://github.com/user-attachments/assets/fadce76a-06b9-4e0b-93da-9a740e789dc2" />
+
+
+<img width="1394" height="874" alt="Création d'une annonce de logement erreur" src="https://github.com/user-attachments/assets/6f631784-e3c8-4519-b106-35dadb12a2c4" />
+
+**Récupération des détails d'un logment par son ID :**
+
+<img width="1393" height="674" alt="Récupération des détails d'un logement avec l'ID" src="https://github.com/user-attachments/assets/cbd014ad-5584-4872-86fb-55dca29d0306" />
+
+
+**Création d'un avis sur un logement :**
+
+<img width="1393" height="587" alt="Création d'un avis sur un logement" src="https://github.com/user-attachments/assets/836e2a16-cd3e-49b0-a3b4-1d2c46b377e3" />
+
+
+<img width="1397" height="491" alt="Récupérer un avis avec son ID" src="https://github.com/user-attachments/assets/8834d0dc-1bbf-4cf8-851f-3caa2e76af9f" />
+
+**Récupération de la liste des équipeent :**
+
+<img width="1399" height="643" alt="Récupération de la liste des équipements" src="https://github.com/user-attachments/assets/93b0a722-7490-43ed-85d5-671d67db67df" />
+
+
+
+
 
