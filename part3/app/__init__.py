@@ -12,7 +12,7 @@ from app.api.v1.protected import api as protected_ns
 jwt = JWTManager()
 
 
-def create_app():
+def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     bcrypt.init_app(app)
     app.config.from_object(config_class)
