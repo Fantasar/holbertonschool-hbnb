@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.api.v1.users import admin_api
 
 api = Namespace('places', description='Place operations')
 
@@ -28,6 +29,38 @@ place_model = api.model('Place', {
     'owner': fields.Nested(user_model, description='Owner details'),
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
+
+@admin_api.route('/places/<place_id>')
+class AdminPlaceModify(Resource):
+    @admin_api.expect(place_model)  # ← Ajouter la documentation
+    @admin_api.response(200, 'Place updated successfully')
+    @admin_api.response(400, 'Invalid input data')
+    @admin_api.response(403, 'Admin privileges required')
+    @admin_api.response(404, 'Place not found')
+    @jwt_required()
+    def put(self, place_id):
+        claims = get_jwt()  # Récupère toutes les claims du JWT
+        is_admin = claims.get('is_admin', False)
+        
+        # Vérifier si l'utilisateur est admin
+        if not is_admin:
+            return {'error': 'Admin privileges required'}, 403
+
+        place = facade.get_place(place_id)
+
+        if not place:  # ← Vérifier si le place existe
+            return {'error': 'Place not found'}, 404
+
+        data = admin_api.payload
+        
+       # Logic to update the place 
+        try:
+            facade.update_place(place_id, data)
+            return {'message': 'Place updated successfully'}, 200
+        except Exception as e:
+            return {'error': str(e)}, 400
+
+
 
 
 @api.route('/')
