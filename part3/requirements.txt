@@ -4,3 +4,5 @@ flask-bcrypt
 flask-jwt-extended
 flask-get_jwt
 flask-request
+sqlalchemy
+flask-sqlalchemy
