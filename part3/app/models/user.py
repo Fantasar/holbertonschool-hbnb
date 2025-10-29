@@ -1,10 +1,23 @@
 from .basemodel import BaseModel
 import re
-from app.extensions import bcrypt
+from app.extensions import bcrypt, db
+import uuid
 
 class User(BaseModel):
-    emails = set()
+    __tablename__ = 'users'
 
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True, index=True)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+
+    """
+    Relations SQLAlchemy (gérées automatiquement)
+    places = db.relationship('Place', backref='owner', lazy=True, cascade='all, delete-orphan')
+    reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
+    """
+    
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         super().__init__()
         self.first_name = first_name
@@ -12,8 +25,7 @@ class User(BaseModel):
         self.email = email
         self.is_admin = is_admin
         self.password = password
-        self.places = []
-        self.reviews = []
+
     
     @property
     def first_name(self):
