@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('places', description='Place operations')
 
@@ -28,20 +29,22 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
+
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()  # Protège l'endpoint : seul un user connecté peut créer
     def post(self):
         """Register a new place"""
+        current_user = get_jwt_identity()
+        # Récupère l'ID du user connecté depuis le token JWT
         place_data = api.payload
-        owner = place_data.get('owner_id', None)
+        # Force l'owner_id à être le user connecté (sécurité)
+        place_data['owner_id'] = current_user
 
-        if owner is None or len(owner) == 0:
-            return {'error': 'Invalid input data.'}, 400
-
-        user = facade.user_repo.get_by_attribute('id', owner)
+        user = facade.user_repo.get_by_attribute('id', current_user)
         if not user:
             return {'error': 'Invalid input data'}, 400
         try:
@@ -55,6 +58,7 @@ class PlaceList(Resource):
         """Retrieve a list of all places"""
         places = facade.get_all_places()
         return [place.to_dict() for place in places], 200
+
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
@@ -71,17 +75,25 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()  # protège l'endpoint
     def put(self, place_id):
         """Update a place's information"""
+        current_user = get_jwt_identity()  # récupère l'ID du user
         place_data = api.payload
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
+
+        # vérifie que user connecté = propriétaire du place
+        if place.owner.id != current_user:
+            return {'error': 'Unauthorized action'}, 403
+
         try:
             facade.update_place(place_id, place_data)
             return {'message': 'Place updated successfully'}, 200
         except Exception as e:
             return {'error': str(e)}, 400
+
 
 @api.route('/<place_id>/amenities')
 class PlaceAmenities(Resource):
@@ -93,19 +105,20 @@ class PlaceAmenities(Resource):
         amenities_data = api.payload
         if not amenities_data or len(amenities_data) == 0:
             return {'error': 'Invalid input data'}, 400
-        
+
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        
+
         for amenity in amenities_data:
             a = facade.get_amenity(amenity['id'])
             if not a:
                 return {'error': 'Invalid input data'}, 400
-        
+
         for amenity in amenities_data:
             place.add_amenity(amenity)
         return {'message': 'Amenities added successfully'}, 200
+
 
 @api.route('/<place_id>/reviews/')
 class PlaceReviewList(Resource):
@@ -117,4 +130,3 @@ class PlaceReviewList(Resource):
         if not place:
             return {'error': 'Place not found'}, 404
         return [review.to_dict() for review in place.reviews], 200
-    
