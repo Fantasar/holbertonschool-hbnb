@@ -1,7 +1,23 @@
 from .basemodel import BaseModel
 from .user import User
+from sqlalchemy.orm import validates
+import uuid
+from app.extensions import db
 
 class Place(BaseModel):
+    __tablename__ = 'places'
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = db.Column(db.String(100), nullable=False, index=True)
+    description = db.Column(db.String(250), nullable=True)
+    price = db.Column(db.Float(), nullable=False, index=True)
+    latitude = db.Column(db.Float(), nullable=False)
+    longitude = db.Column(db.Float(), nullable=False)    
+    
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False, index=True)
+    owner = db.relationship('User', backref='places', lazy=True)
+
+
     def __init__(self, title, price, latitude, longitude, owner, description=None):
         super().__init__()
         self.title = title
@@ -10,65 +26,51 @@ class Place(BaseModel):
         self.latitude = latitude
         self.longitude = longitude
         self.owner = owner
-        self.reviews = []  # List to store related reviews
-        self.amenities = []  # List to store related amenities
-
-    @property
-    def title(self):
-        return self.__title
+        
+        reviews = relationship('Review', backref='place', cascade='all, delete-orphan')
+        amenities = relationship('Amenity', secondary='place_amenities', backref='places')
+        
     
-    @title.setter
-    def title(self, value):
+    @validates('title')
+    def validates_title(self, key, value):
         if not value:
             raise ValueError("Title cannot be empty")
         if not isinstance(value, str):
             raise TypeError("Title must be a string")
         super().is_max_length('title', value, 100)
-        self.__title = value
+        return value
 
-    @property
-    def price(self):
-        return self.__price
     
-    @price.setter
-    def price(self, value):
+    @validates('price')
+    def validates_price(self, key, value):
         if not isinstance(value, float) and not isinstance(value, int):
             raise TypeError("Price must be a float")
-        if value < 0:
+        if value <= 0:
             raise ValueError("Price must be positive.")
-        self.__price = value
+        return value
 
-    @property
-    def latitude(self):
-        return self.__latitude
     
-    @latitude.setter
-    def latitude(self, value):
+    @validates('latitude')
+    def validates_latitude(self, key, value):
         if not isinstance(value, float):
             raise TypeError("Latitude must be a float")
         super().is_between("latitude", value, -90, 90)
-        self.__latitude = value
+        return value
     
-    @property
-    def longitude(self):
-        return self.__longitude
     
-    @longitude.setter
-    def longitude(self, value):
+    @validates('longitude')
+    def validates_longitude(self, key, value):
         if not isinstance(value, float):
             raise TypeError("Longitude must be a float")
         super().is_between("longitude", value, -180, 180)
-        self.__longitude = value
+        return value
 
-    @property
-    def owner(self):
-        return self.__owner
     
-    @owner.setter
-    def owner(self, value):
+    @validates('owner')
+    def validates_owner(self, key, value):
         if not isinstance(value, User):
             raise TypeError("Owner must be a user instance")
-        self.__owner = value
+        return value
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -90,7 +92,7 @@ class Place(BaseModel):
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'owner_id': self.owner.id
+            'owner_id': self.owner_id
         }
     
     def to_dict_list(self):

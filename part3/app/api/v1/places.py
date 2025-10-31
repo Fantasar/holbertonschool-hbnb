@@ -127,6 +127,22 @@ class PlaceResource(Resource):
         except Exception as e:
             return {'error': str(e)}, 400
 
+    @api.response(200, 'Place deleted successfully')
+    @api.response(404, 'Place not found')
+    @jwt_required()  # protège l'endpoint
+    def delete(self, place_id):
+        """Delete a place"""
+        current_user = get_jwt_identity()  # récupère l'ID du user
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+
+        try:
+            facade.delete_place(place_id)
+            return {'message': 'place deleted successfully'}, 200
+        except Exception as e:
+            return {'error': str(e)}, 400    
+
 
 @api.route('/<place_id>/amenities')
 class PlaceAmenities(Resource):

@@ -177,11 +177,18 @@ class UserResource(Resource):
     @users_api.response(404, 'User not found')
     def get(self, user_id):
         """Get user details by ID"""
-        user = facade.get_user(user_id)
-        if not user:
-            return {'error': 'User not found'}, 404
-        return user.to_dict(), 200
-
+        try:
+            user = facade.get_user(user_id)
+            if not user:
+                return {'error': 'User not found'}, 404
+            user_dict = user.to_dict()
+            return user_dict, 200
+            
+        except Exception as e:
+            print(f"ERROR: {type(e).__name__}: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return {'error': 'Internal server error'}, 500
     @users_api.expect(user_model)
     @users_api.response(200, 'User updated successfully')
     @users_api.response(404, 'User not found')
@@ -207,4 +214,20 @@ class UserResource(Resource):
             return user.to_dict(), 200
         except Exception as e:
             return {'error': str(e)}, 400
+
+    @users_api.response(200, 'Review deleted successfully')
+    @users_api.response(404, 'Review not found')
+    @jwt_required()  # protège l'endpoint
+    def delete(self, user_id):
+        """Delete a user"""
+        current_user = get_jwt_identity()  # récupère l'ID du user
+        user = facade.get_review(review_id)
+        if not user:
+            return {'error': 'User not found'}, 404
+
+        try:
+            facade.delete_user(user_id)
+            return {'message': 'User deleted successfully'}, 200
+        except Exception as e:
+            return {'error': str(e)}, 400        
 api = users_api

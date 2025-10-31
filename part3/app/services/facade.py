@@ -3,17 +3,19 @@ from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
+from app.services.repositories.user_repository import UserRepository
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = SQLAlchemyRepository(User)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
         self.place_repo = SQLAlchemyRepository(Place)
         self.review_repo = SQLAlchemyRepository(Review)
+        self.user_repo = UserRepository()
 
     # USER
     def create_user(self, user_data):
         user = User(**user_data)
+        user.hash_password(user_data['password'])
         self.user_repo.add(user)
         return user
     
@@ -24,10 +26,20 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
+        return self.user_repo.get_user_by_email(email)
     
     def update_user(self, user_id, user_data):
         self.user_repo.update(user_id, user_data)
+
+    def delete_user(self, user_id):
+        user = self.user_repo.get(user_id)
+        
+        user = self.user_repo.get(user.user.id)
+        place = self.place_repo.get(user.place.id)
+
+        user.delete_amenity(user)
+        place.delete_amenity(user)
+        self.user_repo.delete(user_id)
     
     # AMENITY
     def create_amenity(self, amenity_data):
@@ -43,6 +55,16 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         self.amenity_repo.update(amenity_id, amenity_data)
+    
+    def delete_amenity(self, amenity_id):
+        amenity = self.amenity_repo.get(amenity_id)
+        
+        user = self.user_repo.get(amenities.user.id)
+        place = self.place_repo.get(amenities.place.id)
+
+        user.delete_amenity(amenity)
+        place.delete_amenity(amenity)
+        self.amenity_repo.delete(amenity_id)
 
     # PLACE
     def create_place(self, place_data):
@@ -73,6 +95,15 @@ class HBnBFacade:
 
     def update_place(self, place_id, place_data):
         self.place_repo.update(place_id, place_data)
+    
+    def delete_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError(f"Place with id {place_id} not found")
+    
+    # SQLAlchemy gère automatiquement les cascades
+        self.place_repo.delete(place_id)
+        return True
 
     # REVIEWS
     def create_review(self, review_data):
