@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('reviews', description='Review operations')
@@ -7,22 +8,20 @@ api = Namespace('reviews', description='Review operations')
 # Define the review model for input validation and documentation
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True, description='ID of the user'),
-    'place_id': fields.String(required=True, description='ID of the place')
+    'rating': fields.Integer(required=True, description='Rating of the place (1-5)')
 })
 
 
 @api.route('/')
 class ReviewList(Resource):
-    @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     @jwt_required()  # protège l'endpoint
+    @api.expect(review_model)
     def post(self):
         """Register a new review"""
+        review_data = request.get_json()
         current_user = get_jwt_identity()  # récupère l'ID du user
-        review_data = api.payload
         place = facade.get_place(review_data['place_id'])
         if not place:
             return {'error': 'Place not found'}, 400

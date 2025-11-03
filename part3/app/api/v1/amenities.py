@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from flask import request
 from app.api.v1.users import admin_api
 
 api = Namespace('amenities', description='Amenity operations')
@@ -80,6 +79,10 @@ class AdminAmenityCreate(Resource):
 
         amenity_data = admin_api.payload
 
+        existing_amenity = facade.amenity_repo.get_by_attribute('name', amenity_data.get('name'))
+        if existing_amenity:
+            return {'error': 'Amenity already exists'}, 400
+
         # Logic to create a new amenity
         try:
             new_amenity = facade.create_amenity(amenity_data)
@@ -87,12 +90,16 @@ class AdminAmenityCreate(Resource):
         except Exception as e:
             return {'error': str(e)}, 400
 
+    @admin_api.response(200, 'List of amenities retrieved successfully')
+    def get(self):
+        """Retrieve a list of all amenities (PUBLIC via admin namespace)"""
+        amenities = facade.get_all_amenities()
+        return [amenity.to_dict() for amenity in amenities], 200
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
     @api.response(200, 'Amenity details retrieved successfully')
     @api.response(404, 'Amenity not found')
-    @jwt_required()
     def get(self, amenity_id):
         """Get amenity details by ID"""
         amenity = facade.get_amenity(amenity_id)
@@ -154,3 +161,11 @@ class AmenityListResource(Resource):
             return new_amenity.to_dict(), 201
         except Exception as e:
             return {'error': str(e)}, 400
+
+@api.route('/')
+class AmenityList(Resource):
+    @api.response(200, 'List of amenities retrieved successfully')
+    def get(self):
+        """Retrieve a list of all amenities (PUBLIC)"""
+        amenities = facade.get_all_amenities()
+        return [amenity.to_dict() for amenity in amenities], 200
