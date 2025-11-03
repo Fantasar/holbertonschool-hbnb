@@ -29,4 +29,8 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(protected_ns, path='/api/v1/protected')
     api.add_namespace(admin_ns, path='/api/v1/admin')
 
+    # AJOUT : Créer les tables automatiquement
+    with app.app_context():
+        db.create_all()
+
     return app
