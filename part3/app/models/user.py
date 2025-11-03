@@ -2,7 +2,13 @@ from .basemodel import BaseModel
 import re
 from app.extensions import bcrypt, db
 import uuid
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .place import Place
+    from .review import Review
+
 
 class User(BaseModel):
     __tablename__ = 'users'
@@ -14,13 +20,27 @@ class User(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
+    places = db.relationship(
+        'Place',
+        back_populates='owner',
+        lazy=True,
+        cascade='all, delete-orphan'
+    )
+
+    reviews = db.relationship(
+        'Review',
+        back_populates='user',
+        lazy=True,
+        cascade='all, delete-orphan'
+    )
+
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         super().__init__()
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.is_admin = is_admin
-        # self.password = password
+        self.hash_password(password)
     
     @validates('first_name')
     def validates_first_name(self, key, value):
@@ -46,9 +66,6 @@ class User(BaseModel):
             raise TypeError("Email must be a string")
         if not re.match(r"[^@]+@[^@]+\.[^@]+", value):
             raise ValueError("Invalid email format")
-        existing = User.query.filter_by(email=value).first()    
-        if existing and (not hasattr(self, 'id') or existing.id != self.id):
-            raise ValueError("Email already exists")
         return value
 
 
@@ -80,8 +97,15 @@ class User(BaseModel):
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'email': self.email
+            'email': self.email,
+            'is_admin': self.is_admin,
         }
+
+        if include_places:
+            result['places'] = [place.to_dict(include_reviews=False) for place in self.places]  # ✅ Évite la boucle
+        if include_reviews:
+            result['reviews'] = [review.to_dict() for review in self.reviews]
+        return result
 
     def hash_password(self, password):
         """Hashes the password before storing it."""
