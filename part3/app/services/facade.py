@@ -76,8 +76,6 @@ class HBnBFacade:
         if not user:
             raise ValueError('User not found')
 
-        amenities_ids = place_data.pop('amenities', [])
-
         # Crée le Place sans passer owner au constructeur
         place = Place(
             title=place_data['title'],

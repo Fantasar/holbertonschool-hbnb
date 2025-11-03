@@ -2,6 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask import request
+from app import db
 
 
 places_api = Namespace('places', description='Place operations')
@@ -13,6 +14,10 @@ admin_places_api = Namespace('admin_places', description='Admin operations on pl
 amenity_model = places_api.model('PlaceAmenity', {
     'id': fields.String(description='Amenity ID'),
     'name': fields.String(description='Name of the amenity')
+})
+
+amenity_ids_model = places_api.model('AmenityIds', {
+    'amenity_ids': fields.List(fields.String, required=True, description="List of amenity IDs")
 })
 
 user_model = places_api.model('PlaceUser', {
@@ -75,10 +80,10 @@ class PlaceList(Resource):
     @places_api.expect(place_model)
     def post(self):
         """Register a new place"""
+        current_user_id = get_jwt_identity()
         place_data = request.get_json()
         if not place_data:
             return {'error': 'No input data provided'}, 400
-        current_user_id = get_jwt_identity()
         # Force l'owner_id à être le user connecté (sécurité)
         place_data['owner_id'] = current_user_id
         try:
@@ -145,7 +150,7 @@ class PlaceResource(Resource):
     @jwt_required()  # protège l'endpoint
     def delete(self, place_id):
         """Delete a place"""
-        current_user = get_jwt_identity()  # récupère l'ID du user
+        current_user_id = get_jwt_identity()  # récupère l'ID du user
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
@@ -161,16 +166,23 @@ class PlaceResource(Resource):
 
 @places_api.route('/<place_id>/amenities')
 class PlaceAmenities(Resource):
-    @places_api.expect(amenity_model)
+    @places_api.expect(amenity_ids_model)
     @places_api.response(200, 'Amenities added successfully')
     @places_api.response(404, 'Place not found')
     @places_api.response(400, 'Invalid input data')
+    @places_api.response(403, 'Unauthorized action')
     @jwt_required()
     def post(self, place_id):
-        current_user = get_jwt_identity()
+        current_user_id = get_jwt_identity()
         amenities_data = request.get_json()
+
         if not amenities_data or not isinstance(amenities_data, list):
             return {'error': 'Invalid input data'}, 400
+        
+        amenity_ids = amenities_data['amenity_ids']
+        
+        if not isinstance(amenity_ids, list):
+            return {'error': 'amenity_ids must be a list'}, 400
 
         place = facade.get_place(place_id)
         if not place:
@@ -179,15 +191,23 @@ class PlaceAmenities(Resource):
         if place.owner_id != current_user_id:
             return {'error': 'Unauthorized action'}, 403
         try:
-            for amenity_id in amenities_data:
+            for amenity_obj in amenities_data:
+                if not isinstance(amenity_obj, dict) or 'id' not in amenity_obj:
+                    return {'error': 'Invalid amenity format'}, 400
+                
+                amenity_id = amenity_obj['id']
                 amenity = facade.get_amenity(amenity_id)
+                
                 if not amenity:
-                    return {'error': f'Amenity {amenity_id} not found'}, 400
+                    return {'error': f'Amenity {amenity_id} not found'}, 404
+                
                 if amenity not in place.amenities:
                     place.amenities.append(amenity)
+            
             db.session.commit()
             return {'message': 'Amenities added successfully'}, 200
         except Exception as e:
+            db.session.rollback()
             return {'error': str(e)}, 400
 
 
