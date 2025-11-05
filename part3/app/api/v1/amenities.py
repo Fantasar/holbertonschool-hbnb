@@ -5,7 +5,8 @@ from app.api.v1.users import admin_api
 
 api = Namespace('amenities', description='Amenity operations')
 
-# Define the amenity model for input validation and documentation
+# Définition du modèle 'Amenity' pour la validation des données et la documentation
+# Ce modèle est utilisé pour valider les entrées lors de la création ou de la mise à jour
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
 })
@@ -18,6 +19,8 @@ class AmenityList(Resource):
     def post(self):
         """Register a new amenity"""
         amenity_data = api.payload
+        # Vérification d'administration attendue : on suppose la présence de 'claims'
+        # Normalement les claims viennent de get_jwt() dans un contexte protégé
         is_admin = claims.get('is_admin', False)
         existing_amenity = facade.amenity_repo.get_by_attribute('name', amenity_data.get('name'))
         if existing_amenity:
@@ -50,14 +53,14 @@ class AdminAmenityModify(Resource):
         if not is_admin:
             return {'error': 'Admin privileges required'}, 403
 
-        amenity = facade.get_amenity(amenity_id)  # ← Récupérer l'amenity
+        amenity = facade.get_amenity(amenity_id)  # Récupère l'amenity via la facade
 
         if not amenity:
             return {'error': 'Amenity not found'}, 404
 
         amenity_data = admin_api.payload
 
-        # Logic to update an amenity
+        # Logique : mettre à jour les champs de l'amenity via la facade
         try:
             facade.update_amenity(amenity_id, amenity_data)
             return {'message': 'Amenity updated successfully'}, 200
@@ -66,7 +69,7 @@ class AdminAmenityModify(Resource):
 
 @admin_api.route('/amenities/')
 class AdminAmenityCreate(Resource):
-    @admin_api.expect(amenity_model)  # ← Documentation Swagger
+    @admin_api.expect(amenity_model)  # Spécifie le modèle attendu pour la documentation Swagger
     @admin_api.response(201, 'amenity created successfully')
     @admin_api.response(400, 'Invalid input data')
     @admin_api.response(403, 'Admin privileges required')
@@ -83,7 +86,7 @@ class AdminAmenityCreate(Resource):
         if existing_amenity:
             return {'error': 'Amenity already exists'}, 400
 
-        # Logic to create a new amenity
+        # Logique : création d'un nouvel équipement via la couche facade
         try:
             new_amenity = facade.create_amenity(amenity_data)
             return new_amenity.to_dict(), 201
@@ -125,16 +128,16 @@ class AmenityResource(Resource):
 
     @api.response(200, 'Amenities deleted successfully')
     @api.response(404, 'Amenities not found')
-  # protège l'endpoint
+    # Protège l'endpoint : nécessite un token JWT valide
     @jwt_required()
     def delete(self, amenity_id):
         """Delete a Amenities"""
-          # récupère l'ID du user
+        # Récupère l'ID de l'utilisateur authentifié depuis le token JWT
         current_user = get_jwt_identity()
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenities not found'}, 404
-        # vérifie que user connecté = auteur de la review
+                # Vérifie que l'utilisateur connecté est autorisé (propriétaire/auteur selon le modèle)
         if amenity.user.id != current_user:
             return {'error': 'Unauthorized action'}, 403
 

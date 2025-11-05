@@ -7,7 +7,8 @@ users_api = Namespace('users', description='User operations')
 admin_api = Namespace('admin', description='Admin operations')
 
 
-# Define the user model for input validation and documentation
+# Définition du modèle utilisateur pour la validation des requêtes et la documentation Swagger
+# Ce modèle définit les champs obligatoires pour la création et la mise à jour des utilisateurs
 user_model = users_api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
@@ -15,7 +16,9 @@ user_model = users_api.model('User', {
     'password': fields.String(required=True, description='Passworld of the user')
 })
 
-# Modèle pour la mise à jour admin
+# Modèle utilisateur pour les opérations administratives
+# Ce modèle étend le modèle utilisateur de base avec des privilèges administratifs supplémentaires
+# et permet la modification de tous les attributs utilisateur, y compris le statut administrateur
 admin_user_model = admin_api.model('AdminUser', {
     'first_name': fields.String(description='First name of the user'),
     'last_name': fields.String(description='Last name of the user'),
@@ -35,8 +38,8 @@ class AdminUserResource(Resource):
     @admin_api.response(400, 'Invalid input data')
     @jwt_required()
     def put(self, user_id):
-        """Update any user (admin only)"""
-        claims = get_jwt()  # Récupère toutes les claims du JWT
+        """Mettre à jour n'importe quel utilisateur (admin uniquement)"""
+        claims = get_jwt()  # Récupère toutes les revendications du token JWT
         is_admin = claims.get('is_admin', False)
         
         # Vérifier si l'utilisateur est admin
@@ -59,7 +62,8 @@ class AdminUserResource(Resource):
         
         # Logic to update user details, including email and password
         try:
-            # Si un mot de passe est fourni, le hasher
+            # Hache le mot de passe s'il est fourni dans la requête
+            # Supprime le mot de passe en texte clair avant la mise à jour
             if 'password' in data:
                 user.hash_password(data['password'])
                 del data['password']  # Ne pas passer le password en clair
@@ -146,7 +150,7 @@ class AdminUserModify(Resource):
     @admin_api.response(404, 'user not found')
     @jwt_required()  # protège l'endpoint
     def delete(self, user_id):
-        """Delete a user"""
+        """Supprimer un utilisateur"""
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
 
@@ -167,10 +171,11 @@ class UserList(Resource):
     @users_api.response(409, 'Email already registered')
     @users_api.response(400, 'Invalid input data')
     def post(self):
-        """Register a new user"""
+        """Enregistrer un nouvel utilisateur"""
         user_data = users_api.payload
 
-        # Simulate email uniqueness check (to be replaced by real validation with persistence)
+        # Vérifie l'unicité de l'email avant la création de l'utilisateur
+        # Empêche les adresses email en double dans le système
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
             return {'error': 'Email already registered'}, 409
@@ -183,7 +188,7 @@ class UserList(Resource):
 
     @users_api.response(200, 'List of users retrieved successfully')
     def get(self):
-        """Retrieve a list of users"""
+        """Récupérer la liste des utilisateurs"""
         users = facade.get_users()
         return [user.to_dict() for user in users], 200
 
@@ -193,7 +198,7 @@ class UserResource(Resource):
     @users_api.response(200, 'User details retrieved successfully')
     @users_api.response(404, 'User not found')
     def get(self, user_id):
-        """Get user details by ID"""
+        """Obtenir les détails d'un utilisateur par son ID"""
         try:
             user = facade.get_user(user_id)
             if not user:
@@ -211,10 +216,11 @@ class UserResource(Resource):
     @users_api.response(400, 'Invalid input data')
     @jwt_required()  # protège l'endpoint
     def put(self, user_id):
-        current_user = get_jwt_identity()  # récupère l'ID du user
+        current_user = get_jwt_identity()  # Get authenticated user's ID from JWT
         user_data = users_api.payload
 
-        # vérifie que user modifie uniquement ses propres données
+        # S'assure que les utilisateurs ne peuvent modifier que leurs propres données
+        # Vérification de sécurité pour empêcher les modifications non autorisées
         if user_id != current_user:
             return {'error': 'Unauthorized action'}, 403
 
@@ -222,7 +228,8 @@ class UserResource(Resource):
         if not user:
             return {'error': 'User not found'}, 404
 
-        # empêche modification email/password
+        # Empêche la modification des champs sensibles (email/mot de passe)
+        # Ces champs nécessitent des points de terminaison/processus spéciaux pour la sécurité
         if 'email' in user_data or 'password' in user_data:
             return {'error': 'You cannot modify email or password'}, 400
 
@@ -237,8 +244,8 @@ class UserResource(Resource):
     @users_api.response(404, 'Review not found')
     @jwt_required()  # protège l'endpoint
     def delete(self, user_id):
-        """Delete a user"""
-        current_user = get_jwt_identity()  # récupère l'ID du user
+        """Supprimer un utilisateur"""
+        current_user = get_jwt_identity()  # Récupère l'ID de l'utilisateur authentifié depuis le JWT
 
         if user_id != current_user:
             return {'error': 'Unauthorized action'}, 403

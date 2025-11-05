@@ -10,16 +10,21 @@ places_api = Namespace('places', description='Place operations')
 admin_places_api = Namespace('admin_places', description='Admin operations on places')
 
 
-# Define the models for related entities
+# Définition des modèles pour les entités liées aux lieux
+# Modèle pour les équipements (amenities) associés à un lieu
 amenity_model = places_api.model('PlaceAmenity', {
     'id': fields.String(description='Amenity ID'),
     'name': fields.String(description='Name of the amenity')
 })
 
+# Modèle pour la gestion des IDs des équipements
+# Utilisé pour ajouter ou supprimer des équipements d'un lieu
 amenity_ids_model = places_api.model('AmenityIds', {
     'amenity_ids': fields.List(fields.String, required=True, description="List of amenity IDs")
 })
 
+# Modèle pour les informations du propriétaire d'un lieu
+# Utilisé pour afficher les informations de base du propriétaire
 user_model = places_api.model('PlaceUser', {
     'id': fields.String(description='User ID'),
     'first_name': fields.String(description='First name of the owner'),
@@ -27,7 +32,9 @@ user_model = places_api.model('PlaceUser', {
     'email': fields.String(description='Email of the owner')
 })
 
-# Define the place model for input validation and documentation
+# Définition du modèle principal pour les lieux
+# Ce modèle est utilisé pour la validation des entrées et la documentation Swagger
+# Il définit tous les champs nécessaires pour créer ou mettre à jour un lieu
 place_model = places_api.model('Place', {
     'title': fields.String(required=True, description='Title of the place'),
     'description': fields.String(description='Description of the place'),
@@ -39,7 +46,7 @@ place_model = places_api.model('Place', {
 
 @admin_places_api.route('/places/<place_id>')
 class AdminPlaceModify(Resource):
-    @admin_places_api.expect(place_model)  # ← Ajouter la documentation
+    @admin_places_api.expect(place_model)  # Spécifie le modèle attendu pour la validation des données
     @admin_places_api.response(200, 'Place updated successfully')
     @admin_places_api.response(400, 'Invalid input data')
     @admin_places_api.response(403, 'Admin privileges required')
@@ -120,19 +127,24 @@ class PlaceResource(Resource):
     @jwt_required()  # protège l'endpoint
     def put(self, place_id):
         """Update a place's information"""
+            # Récupération des informations d'authentification
         current_user = get_jwt_identity() # récupère l'ID du user
         place_data = request.get_json()
 
          # Log pour débogage
         print("Données reçues :", place_data)
 
+            # Validation des données reçues
         if not place_data:
             return {'error': 'No input data provided'}, 400
+        
+            # Vérification de l'existence du lieu
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
 
-        # vérifie que user connecté = propriétaire du place
+        # Vérification de sécurité : seul le propriétaire peut modifier son lieu
+        # Cette vérification empêche les modifications non autorisées
         if place.owner_id != current_user:
             return {'error': 'Unauthorized action'}, 403
 
@@ -150,11 +162,14 @@ class PlaceResource(Resource):
     @jwt_required()  # protège l'endpoint
     def delete(self, place_id):
         """Delete a place"""
+            # Récupération de l'identité de l'utilisateur pour les vérifications de sécurité
         current_user_id = get_jwt_identity()  # récupère l'ID du user
+            # Vérification de l'existence du lieu
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
 
+            # Vérification des droits d'accès : seul le propriétaire peut supprimer son lieu
         if place.owner_id != current_user_id:
             return {'error': 'Unauthorized action'}, 403
         try:
@@ -173,17 +188,21 @@ class PlaceAmenities(Resource):
     @places_api.response(403, 'Unauthorized action')
     @jwt_required()
     def post(self, place_id):
+            # Récupération et validation de l'utilisateur connecté
         current_user_id = get_jwt_identity()
         amenities_data = request.get_json()
 
+            # Validation du format des données reçues
         if not amenities_data or not isinstance(amenities_data, list):
             return {'error': 'Invalid input data'}, 400
         
+            # Extraction et validation des IDs des équipements
         amenity_ids = amenities_data['amenity_ids']
         
         if not isinstance(amenity_ids, list):
             return {'error': 'amenity_ids must be a list'}, 400
 
+            # Vérification de l'existence du lieu et des droits d'accès
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404

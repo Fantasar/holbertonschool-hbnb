@@ -4,7 +4,7 @@ from app.services import facade
 
 api = Namespace('auth', description='Authentication operations')
 
-# Model for input validation
+# Modèle pour la validation des données d'entrée
 login_model = api.model('Login', {
     'email': fields.String(required=True, description='User email'),
     'password': fields.String(required=True, description='User password')
@@ -25,9 +25,11 @@ class Login(Resource):
         if not user or not user.verify_password(credentials['password']):
             return {'error': 'Invalid credentials'}, 401
 
-        # Étape 3 : Créer un jeton JWT avec l’identifiant de l’utilisateur et le drapeau is_admin
+        # Étape 3 : création du token JWT
+        # Le token contient l'identité de l'utilisateur et un claim additionnel 'is_admin'
+        # Ce claim permet de distinguer les privilèges administrateur côté API
         access_token = create_access_token(
-            identity=str(user.id),   # seul l’identifiant utilisateur va ici
+            identity=str(user.id),   # seul l’identifiant utilisateur est stocké comme identité
             additional_claims={"is_admin": user.is_admin}
         )
 
