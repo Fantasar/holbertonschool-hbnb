@@ -16,7 +16,8 @@ class HBnBFacade:
         self.review_repo = ReviewRepository()
         self.user_repo = UserRepository()
 
-    # USER
+    # UTILISATEUR
+    # Méthodes liées à la gestion des utilisateurs (CRUD basique via UserRepository)
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
@@ -47,7 +48,8 @@ class HBnBFacade:
         self.user_repo.delete(user_id)
         return True
 
-    # AMENITY
+    # ÉQUIPEMENT
+    # Méthodes pour gérer les équipements/commodités (amenities)
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
         self.amenity_repo.add(amenity)
@@ -70,13 +72,14 @@ class HBnBFacade:
         self.amenity_repo.delete(amenity_id)
         return True
 
-    # PLACE
+    # LIEU
+    # Méthodes pour gérer les lieux (places) et les relations avec owners et amenities
     def create_place(self, place_data):
         user = self.user_repo.get(place_data['owner_id'])
         if not user:
             raise ValueError('User not found')
 
-        # Crée le Place sans passer owner au constructeur
+    # Crée l'objet Place sans fournir l'attribut owner au constructeur
         place = Place(
             title=place_data['title'],
             price=place_data['price'],
@@ -106,7 +109,7 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             raise ValueError(f"Place with id {place_id} not found")
-        # Ne pas permettre la modification de owner_id ou id
+        # Ne pas permettre la modification de owner_id ou id (sécurité/conservation d'intégrité)
         if 'owner_id' in place_data:
             del place_data['owner_id']
         if 'id' in place_data:
@@ -117,7 +120,7 @@ class HBnBFacade:
             if hasattr(place, key) and key not in ['created_at', 'updated_at']:
                 setattr(place, key, value)
 
-        # Mise à jour des amenities si présent dans place_data
+    # Mise à jour des amenities si présent dans place_data
         if 'amenities' in place_data:
             # Réinitialiser la liste des amenities
             place.amenities = []
@@ -126,7 +129,7 @@ class HBnBFacade:
                 if amenity:
                     place.amenities.append(amenity)
 
-        # Sauvegarde en base
+    # Persistance des changements en base de données
         db.session.commit()
         return place
 
@@ -139,7 +142,8 @@ class HBnBFacade:
         self.place_repo.delete(place_id)
         return True
 
-    # REVIEWS
+    # AVIS
+    # Méthodes pour gérer les avis (reviews) associés aux lieux
     def create_review(self, review_data):        
         place = self.place_repo.get(review_data['place_id'])
         if not place:
