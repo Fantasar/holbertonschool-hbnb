@@ -88,6 +88,7 @@ Ce diagramme illustre les **relations entre les principales entités** du projet
 
 Ce schéma visuel garantit une compréhension claire des dépendances et des contraintes entre les différentes tables.
 
+<img width="2651" height="1602" alt="mermaid-diagram-2025-11-05-154958" src="https://github.com/user-attachments/assets/a9241119-4b3a-4110-8da7-0d2a22f87434" />
 
 🧪 **Exemples de cas d’utilisation** : 
 
@@ -108,11 +109,14 @@ Voici quelques codes de réponse HTTP actuellement pris en compte, ainsi que ceu
 
   - **504** : Délai d’attente dépassé.
 
-  # Exemple : Connexion utilisateur
+---
+  **Exemple : Connexion utilisateur**
+
 curl -X POST http://127.0.0.1:5000/api/v1/login \
 -H "Content-Type: application/json" \
 -d '{"email": "user@example.com", "password": "password123"}'
 
+---
 
 🧪 **Cas d’utilisation des fichiers de contrôle**
 
@@ -137,8 +141,9 @@ Un des fichiers de test se concentre sur la **validation des relations** entre l
 Ces tests permettent de s’assurer que les contraintes, clés étrangères et relations SQLAlchemy sont correctement définies et fonctionnelles.
 
 ### 🧰 Exemple d’exécution
-```bash
+
 # Réinitialiser la base avant le test
+
 python3 reset_db.py
 
 <img width="507" height="485" alt="Test des fonctions" src="https://github.com/user-attachments/assets/bc824157-04c1-4520-9d60-df885f1ac924" />
