@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from app.extensions import db
 
+# Ceci est une classe abstraite définissant une interface commune pour les repositories.
+# Elle impose que toute classe héritant de Repository doive implémenter ces méthodes,
+# garantissant ainsi une API cohérente pour accéder aux données.
 class Repository(ABC):
     @abstractmethod
     def add(self, obj):
