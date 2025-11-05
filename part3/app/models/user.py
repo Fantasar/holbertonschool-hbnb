@@ -5,14 +5,16 @@ import uuid
 from sqlalchemy.orm import validates, relationship
 from typing import TYPE_CHECKING
 
+# Importation conditionnelle des modules pour éviter les importations circulaires
 if TYPE_CHECKING:
     from .place import Place
     from .review import Review
 
 
 class User(BaseModel):
-    __tablename__ = 'users'
+    __tablename__ = 'users' # Nom de la table dans la base de données
 
+    # Définition des colonnes principales
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     first_name = db.Column(db.String(50), nullable=False, index=True)
     last_name = db.Column(db.String(50), nullable=False, index=True)
@@ -20,18 +22,21 @@ class User(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
+
+    # Relations avec d'autres tables
     places = db.relationship(
         'Place',
-        back_populates='owner',
+        back_populates='owner', # fait correspondre l’attribut “owner” dans la classe Place
         lazy=True,
-        cascade='all, delete-orphan'
+        cascade='all, delete-orphan' # Supprime automatiquement les objets Place quand l'utilisateur est supprimé
     )
 
+    # Relations avec d'autres tables
     reviews = db.relationship(
         'Review',
-        back_populates='user',
+        back_populates='user', # fait correspondre l’attribut “user” dans la classe Review
         lazy=True,
-        cascade='all, delete-orphan'
+        cascade='all, delete-orphan' # Supprime automatiquement les avis associés quand l’utilisateur est supprimé
     )
 
     def __init__(self, first_name, last_name, email, password, is_admin=False):

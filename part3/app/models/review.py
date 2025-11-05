@@ -5,7 +5,8 @@ import uuid
 from sqlalchemy.orm import validates, relationship
 from typing import TYPE_CHECKING
 
-
+# TYPE_CHECKING permet d'indiquer à l’IDE les types utilisés uniquement pour l'analyse statique.
+# Cela évite les importations circulaires tout en facilitant la complétion et la validation des types.
 if TYPE_CHECKING:
     from .place import Place
     from .user import User
@@ -13,16 +14,19 @@ if TYPE_CHECKING:
 class Review(BaseModel):
 	__tablename__ = 'reviews'
 
+	# Identifiant unique généré automatiquement sous forme d’UUID
 	id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 	text = db.Column(db.String(120), nullable=False, index=True)
 	rating = db.Column(db.Float(), nullable=False, index=True)
 
+	# Clé étrangère vers la table des lieux (places)
 	place_id = db.Column(
 		db.String(36),
 		db.ForeignKey('places.id'),
 		nullable=False,
 	)
 	
+	# Clé étrangère vers la table des utilisateurs (users)
 	user_id = db.Column(
 		db.String(36),
 		db.ForeignKey('users.id'),
@@ -31,11 +35,11 @@ class Review(BaseModel):
 
 	place = db.relationship(
 		'Place',
-		back_populates='reviews'
+		back_populates='reviews' # Fait le lien inverse avec la relation 'reviews' définie dans Place
 	)
 	user = db.relationship(
 		'User',
-		back_populates='reviews'
+		back_populates='reviews' # Fait le lien inverse avec la relation 'reviews' définie dans User
 	)
 
 	def __init__(self, text, rating, place, user):

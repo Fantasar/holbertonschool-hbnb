@@ -4,6 +4,9 @@ import uuid
 from sqlalchemy.orm import validates, relationship
 from typing import TYPE_CHECKING
 
+# TYPE_CHECKING permet d'éviter les boucles d'importation
+# Ces imports sont uniquement pour l'analyse statique (autocomplétion, validation de type)
+if TYPE_CHECKING:
 if TYPE_CHECKING:
 	from .place import Place
 
@@ -15,6 +18,7 @@ class Amenity(BaseModel):
 	id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 	name = db.Column(db.String(50), nullable=False, index=True)
 
+	# Relation Many-to-Many avec Place via la table d'association place_amenity
 	places = db.relationship(
 		'Place',
 		secondary=place_amenity,

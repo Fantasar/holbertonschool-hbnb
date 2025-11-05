@@ -4,17 +4,21 @@ import uuid
 from app.extensions import db
 from typing import TYPE_CHECKING
 
+# TYPE_CHECKING est utilisé uniquement pendant l'analyse statique.
+# Cela évite les erreurs d'importation circulaire tout en permettant l'autocomplétion.
 if TYPE_CHECKING:
     from .user import User
     from .review import Review
     from .amenity import Amenity
 
 from app.models.place_amenity import place_amenity
+# place_amenity est une table d'association (table de liaison) entre Place et Amenity
 
 
 class Place(BaseModel):
     __tablename__ = 'places'
 
+    # Identifiant unique du lieu (UUID, auto-généré)
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     title = db.Column(db.String(100), nullable=False, index=True)
     description = db.Column(db.Text, nullable=True)
@@ -22,12 +26,14 @@ class Place(BaseModel):
     latitude = db.Column(db.Float(), nullable=False)
     longitude = db.Column(db.Float(), nullable=False)
 
+    # Clé étrangère vers l’utilisateur propriétaire
     owner_id = db.Column(
         db.String(36),
         db.ForeignKey('users.id'),
         nullable=False
     )
 
+    # Définitions des relations entre tables (ORM)
     owner = db.relationship(
         'User', 
         back_populates='places'
