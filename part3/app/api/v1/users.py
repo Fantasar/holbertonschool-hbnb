@@ -142,6 +142,23 @@ class AdminUserModify(Resource):
         except Exception as e:
             return {'error': str(e)}, 400
 
+    @admin_api.response(200, 'user deleted successfully')
+    @admin_api.response(404, 'user not found')
+    @jwt_required()  # protège l'endpoint
+    def delete(self, user_id):
+        """Delete a user"""
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        if not is_admin:
+            return {'error': 'Admin privileges required'}, 403
+        
+        try:
+            facade.delete_user(user_id)
+            return {'message': 'User deleted successfully'}, 200
+        except Exception as e:
+            return {'error': str(e)}, 400         
+
 
 @users_api.route('/')
 class UserList(Resource):
