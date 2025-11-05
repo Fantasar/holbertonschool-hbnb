@@ -1,5 +1,10 @@
 import os
 
+# Fichier de configuration de l'application
+# Définit les classes de configuration pour les environnements
+# (development, production, testing) et expose un dictionnaire `config`
+# permettant de sélectionner la configuration souhaitée.
+
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)
