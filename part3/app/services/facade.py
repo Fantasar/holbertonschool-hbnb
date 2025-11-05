@@ -1,4 +1,9 @@
-from app.persistence.repository import SQLAlchemyRepository
+from app.services.repositories.user_repository import UserRepository
+from app.services.repositories.amenity_repository import AmenityRepository
+from app.services.repositories.place_repository import PlaceRepository
+from app.services.repositories.review_repository import ReviewRepository
+from app.extensions import db
+
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
@@ -6,10 +11,10 @@ from app.models.review import Review
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = SQLAlchemyRepository(User)
-        self.amenity_repo = SQLAlchemyRepository(Amenity)
-        self.place_repo = SQLAlchemyRepository(Place)
-        self.review_repo = SQLAlchemyRepository(Review)
+        self.amenity_repo = AmenityRepository()
+        self.place_repo = PlaceRepository()
+        self.review_repo = ReviewRepository()
+        self.user_repo = UserRepository()
 
     # USER
     def create_user(self, user_data):
@@ -24,11 +29,24 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
+        return self.user_repo.get_user_by_email(email)
     
     def update_user(self, user_id, user_data):
+        if 'password' in user_data:
+            user = self.user_repo.get(user_id)
+            if user:
+                user.hash_password(user_data['password'])
+                del user_data['password']
         self.user_repo.update(user_id, user_data)
-    
+
+    def delete_user(self, user_id):
+        user = self.user_repo.get(user_id)
+        
+        if not user:
+            raise ValueError(f"User with id {user_id} not found")
+        self.user_repo.delete(user_id)
+        return True
+
     # AMENITY
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
@@ -43,26 +61,39 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         self.amenity_repo.update(amenity_id, amenity_data)
+    
+    def delete_amenity(self, amenity_id):
+        amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            raise ValueError(f"Amenity with id {amenity_id} not found")
+        
+        self.amenity_repo.delete(amenity_id)
+        return True
 
     # PLACE
     def create_place(self, place_data):
-        user = self.user_repo.get_by_attribute('id', place_data['owner_id'])
+        user = self.user_repo.get(place_data['owner_id'])
         if not user:
-            raise KeyError('Invalid input data')
-        del place_data['owner_id']
-        place_data['owner'] = user
-        amenities = place_data.pop('amenities', None)
-        if amenities:
-            for a in amenities:
-                amenity = self.get_amenity(a['id'])
-                if not amenity:
-                    raise KeyError('Invalid input data')
-        place = Place(**place_data)
+            raise ValueError('User not found')
+
+        # Crée le Place sans passer owner au constructeur
+        place = Place(
+            title=place_data['title'],
+            price=place_data['price'],
+            latitude=place_data['latitude'],
+            longitude=place_data['longitude'],
+            description=place_data.get('description')
+        )
+        place.owner = user
+
+    # Gestion des amenities (si présentes)
+        if 'amenities' in place_data:
+            for amenity_id in place_data['amenities']:
+                amenity = self.get_amenity(amenity_id)
+                if amenity:
+                    place.amenities.append(amenity)
+
         self.place_repo.add(place)
-        user.add_place(place)
-        if amenities:
-            for amenity in amenities:
-                place.add_amenity(amenity)
         return place
 
     def get_place(self, place_id):
@@ -72,26 +103,59 @@ class HBnBFacade:
         return self.place_repo.get_all()
 
     def update_place(self, place_id, place_data):
-        self.place_repo.update(place_id, place_data)
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError(f"Place with id {place_id} not found")
+        # Ne pas permettre la modification de owner_id ou id
+        if 'owner_id' in place_data:
+            del place_data['owner_id']
+        if 'id' in place_data:
+            del place_data['id']
+
+         # Mise à jour des champs simples
+        for key, value in place_data.items():
+            if hasattr(place, key) and key not in ['created_at', 'updated_at']:
+                setattr(place, key, value)
+
+        # Mise à jour des amenities si présent dans place_data
+        if 'amenities' in place_data:
+            # Réinitialiser la liste des amenities
+            place.amenities = []
+            for amenity_id in place_data['amenities']:
+                amenity = self.get_amenity(amenity_id)
+                if amenity:
+                    place.amenities.append(amenity)
+
+        # Sauvegarde en base
+        db.session.commit()
+        return place
+
+    def delete_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError(f"Place with id {place_id} not found")
+        
+        # SQLAlchemy gère automatiquement les cascades
+        self.place_repo.delete(place_id)
+        return True
 
     # REVIEWS
-    def create_review(self, review_data):
-        user = self.user_repo.get(review_data['user_id'])
-        if not user:
-            raise KeyError('Invalid input data')
-        del review_data['user_id']
-        review_data['user'] = user
-        
+    def create_review(self, review_data):        
         place = self.place_repo.get(review_data['place_id'])
         if not place:
-            raise KeyError('Invalid input data')
+            raise ValueError('Place not found')
+        user = self.user_repo.get(review_data['user_id'])
+        if not user:
+            raise ValueError('Invalid user_id: user not found')
+        del review_data['user_id']
+        review_data['user'] = user
         del review_data['place_id']
         review_data['place'] = place
 
+
         review = Review(**review_data)
         self.review_repo.add(review)
-        user.add_review(review)
-        place.add_review(review)
+
         return review
         
     def get_review(self, review_id):
@@ -111,10 +175,8 @@ class HBnBFacade:
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)
+        if not review:
+            raise ValueError(f"Review with id {review_id} not found")
         
-        user = self.user_repo.get(review.user.id)
-        place = self.place_repo.get(review.place.id)
-
-        user.delete_review(review)
-        place.delete_review(review)
         self.review_repo.delete(review_id)
+        return True
