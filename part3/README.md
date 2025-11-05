@@ -74,7 +74,7 @@ Lancement du serveur :
 
 Commande à intégrer dans le terminal : python3 run.py
 
-Nous recommandons pour d'installer un environnement virtuelle afin de pouvoir travailler dans de bonne condition.
+Nous recommandons pour une bonne utilisation d'installer un environnement virtuelle afin de pouvoir travailler dans de bonne condition.
 
 
 ## 📊 Diagramme de relations (Mermaid.js)
