@@ -1,3 +1,11 @@
+"""
+Ce fichier définit la classe HBnBFacade qui centralise et simplifie 
+l'accès aux différentes opérations CRUD sur les utilisateurs, lieux, équipements et avis. 
+
+Cette façade agit comme une interface unique entre la logique métier 
+et les repositories, facilitant la gestion des données et la coordination des relations entre modèles.
+"""
+
 from app.services.repositories.user_repository import UserRepository
 from app.services.repositories.amenity_repository import AmenityRepository
 from app.services.repositories.place_repository import PlaceRepository

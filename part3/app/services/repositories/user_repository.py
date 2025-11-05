@@ -1,3 +1,11 @@
+"""
+Ce fichier définit le repository spécifique pour le modèle User,
+héritant d'une classe générique SQLAlchemyRepository.
+
+Il fournit une méthode supplémentaire pour récupérer un utilisateur
+via son email unique, ainsi que les méthodes d'ajout et de sauvegarde
+des objets User en base de données via SQLAlchemy.
+"""
 from app.models.user import User
 from app.extensions import db
 from app.persistence.repository import SQLAlchemyRepository

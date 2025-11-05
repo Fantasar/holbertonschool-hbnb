@@ -1,3 +1,11 @@
+"""
+Ce fichier définit le repository spécifique pour le modèle Amenity
+en utilisant une classe générique SQLAlchemyRepository.
+
+Il fournit des méthodes pour ajouter et sauvegarder des instances
+d'Amenity dans la base de données via SQLAlchemy, encapsulant
+ainsi la logique d'accès aux données et facilitant la maintenance.
+"""
 from app.models.amenity import Amenity
 from app.extensions import db
 from app.persistence.repository import SQLAlchemyRepository
