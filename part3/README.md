@@ -87,6 +87,7 @@ Ce diagramme illustre les **relations entre les principales entités** du projet
 - Une **amenity (Amenity)** peut appartenir à plusieurs lieux via la table de jointure **Place_Amenity**.
 
 Ce schéma visuel garantit une compréhension claire des dépendances et des contraintes entre les différentes tables.
+Un cas d'amélioration dans l'avenir a étais ajouter dans le diagramme avec la table Resrvation.
 
 <img width="2651" height="1602" alt="mermaid-diagram-2025-11-05-154958" src="https://github.com/user-attachments/assets/a9241119-4b3a-4110-8da7-0d2a22f87434" />
 
@@ -146,9 +147,14 @@ Ces tests permettent de s’assurer que les contraintes, clés étrangères et r
 
 python3 reset_db.py
 
+
 <img width="507" height="485" alt="Test des fonctions" src="https://github.com/user-attachments/assets/bc824157-04c1-4520-9d60-df885f1ac924" />
 
+
+
 <img width="559" height="436" alt="Test Relation" src="https://github.com/user-attachments/assets/f0481ecd-0173-445e-9de5-8800751de9a9" />
+
+
 
 ** 👤Auteurs et répartition du travail** :
 
