@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 # TYPE_CHECKING permet d'éviter les boucles d'importation
 # Ces imports sont uniquement pour l'analyse statique (autocomplétion, validation de type)
 if TYPE_CHECKING:
-if TYPE_CHECKING:
 	from .place import Place
 
 from app.models.place_amenity import place_amenity
