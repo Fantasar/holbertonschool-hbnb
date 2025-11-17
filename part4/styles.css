@@ -46,19 +46,21 @@ header {
 
 nav {
     display: flex;
-    gap: 1rem; /* Espace entre les liens de navigations */
+    gap: 5rem; /* Espace entre les liens de navigations */
 }
 
 nav a {
-    color: #92070783;
+    padding: 12px 40px; /* Permet de gérer la longeur et la largeur du bouton */
+    background-color: #92070783;
+    color: white;
     text-decoration: none; /* Permet de souligner du texte */
-    padding : 0.5rem 1rem;
+    border-radius: 30px; /* Permet d'arrondir le bouton */
+    font-weight: bold; /* Permet de mettre le texte en gras */
     transition: background-color 0.3s; /*Animation de coloration au survol*/
 }
 
 nav a:hover { /*Permet de gérer l'animation*/
-    background-color: #555;
-    border-radius: 5px;
+    background-color: #610404d2;
 }
 
 /*------------------------------------------*/
@@ -261,25 +263,181 @@ nav a:hover { /*Permet de gérer l'animation*/
     }
 }
 
+/*------------------------------------------*/
+/*------===> FOND TRIANGLES STATIQUE <===-- */
+/*------------------------------------------*/
+
+/* Conteneur pour le fond (à appliquer sur body ou un div parent) */
+.triangle-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0; /* Derrière le contenu mais visible */
+    pointer-events: none; /* Permet de cliquer à travers */
+}
+
+/* Les 4 triangles en pseudo-éléments */
+.triangle-background:before,
+.triangle-background:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 200vmax;
+    height: 200vmax;
+    top: 50%;
+    left: 50%;
+    margin-top: -100vmax;
+    margin-left: -100vmax; /* Recentré correctement */
+    opacity: 0.65;
+}
+
+/* Triangle rouge en haut à gauche */
+.triangle-background:before {
+    transform: rotate(45deg);
+    background: #e46569;
+    transform-origin: 0 50%;
+}
+
+/* Triangle orange en haut à droite */
+.triangle-background:after {
+    transform: rotate(135deg);
+    background: #ecaf81;
+    transform-origin: 0 50%;
+}
+
+/* Pour les 2 triangles du bas, on utilise un autre élément */
+.triangle-background-bottom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.triangle-background-bottom:before,
+.triangle-background-bottom:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 200vmax;
+    height: 200vmax;
+    top: 50%;
+    left: 50%;
+    margin-top: -100vmax;
+    margin-left: 0; /* Changé de -100vmax à 0 */
+    opacity: 0.65;
+}
+
+/* Triangle bleu en bas à gauche */
+.triangle-background-bottom:before {
+    transform: rotate(-45deg);
+    background: #60b8d4;
+    transform-origin: 0 50%;
+}
+
+/* Triangle bleu foncé en bas à droite */
+.triangle-background-bottom:after {
+    transform: rotate(-135deg);
+    background: #3745b5;
+    transform-origin: 0 50%;
+}
 
 /*------------------------------------------*/
 /*----------===> PLACE CARD <===----------- */
 /*------------------------------------------*/
 
+#places-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin: 30px 0;
+}
+
 .place-card {
-    margin: 20px; /* Espace autour de la carte */
+    margin: 0; /* Espace autour de la carte */
     padding: 10px; /* Espace à l'intérieur de la carte */
     border: 1px solid #ddd; /*Couleur de la bordure */
     border-radius: 10px; /*Permet d'arrondir les bords de la carte*/
     background-color: white;
+    overflow: hidden;  /* pour arrondir l’image */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.place-card img.place-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.place-details {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    align-items: flex-start;
+}
+
+.place-image img {
+    width: 450px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.place-info {
+    flex: 1;
 }
 
 .review-card {
-    margin: 20px; /* Espace autour de la carte */
+    margin: 0; /* Espace autour de la carte */
     padding: 10px; /* Espace à l'intérieur de la carte */
     border: 1px solid #ddd; /*Couleur de la bordure */
     border-radius: 10px; /*Permet d'arrondir les bords de la carte*/
     background-color: #f9f9f9;
+    /* Ajout de l'effet de bulle sur les commentaires */
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Largeur flexible */
+    flex: 1 1 calc(33.333% - 20px); /* 3 colonnes */
+    min-width: 250px; /* Largeur minimum */
+    max-width: 350px; /* Largeur maximum */
+}
+
+/* Conteneur pour aligner les avis côte à côte */
+#reviews-container {
+    display: flex;
+    flex-wrap: wrap; /* Passe à la ligne si besoin */
+    gap: 20px; /* Espace entre les cartes */
+    justify-content: flex-start;
+    margin-top: 30px; /* Ajoute de l'espace entre les boutons*/
+    margin-bottom: 30px; /* Ajoute de l'espace en dessous des commentaires*/
+}
+
+/* Petite pointe de bulle en bas à gauche */
+.review-card:before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #f9f9f9;
+}
+
+/* Effet de "flottement" au survol */
+.review-card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .review-card .comment { /* Permet de gérer la partie commentaire */
@@ -295,12 +453,14 @@ nav a:hover { /*Permet de gérer l'animation*/
     color: #ff9800;
 }
 
+
+
 /*------------------------------------------*/
 /*------===> Add Review Button <===-------- */
 /*------------------------------------------*/
 
 .details-button {
-    padding: 8px 16px; /* Permet de gérer la longeur et la largeur du bouton */
+    padding: 10px 18px; /* Permet de gérer la longeur et la largeur du bouton */
     background-color: #5aa7fa;
     color: white;
     border: none; /*Couleur de la bordure */
@@ -355,7 +515,334 @@ main {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto; /* Geres l'indentation de la page */
+    position: relative;
+    z-index: 10;
+    background-color: none; /* AJOUTE pour que le fond soit opaque */
+    padding-bottom: 80px;
 }
+
+main > h1 {
+    padding: 10px 26px; /* Permet de gérer la longeur et la largeur du bouton */
+    background-color: #92070783;
+    color: white;
+    text-decoration: none; /* Permet de souligner du texte */
+    border-radius: 30px; /* Permet d'arrondir le bouton */
+    font-weight: bold; /* Permet de mettre le texte en gras */
+    transition: background-color 0.3s; /*Animation de coloration au survol*/ */
+}
+
+main > h1:hover { /*Permet de gérer l'animation*/
+    background-color: #610404d2;
+}
+
+/* Avis des clients */
+main > h2 {
+    padding: 12px 40px; /* Permet de gérer la longeur et la largeur du bouton */
+    background-color: #92070783;
+    color: white;
+    text-decoration: none; /* Permet de souligner du texte */
+    border-radius: 30px; /* Permet d'arrondir le bouton */
+    font-weight: bold; /* Permet de mettre le texte en gras */
+    transition: background-color 0.3s; /*Animation de coloration au survol*/ */
+}
+
+main > h2:hover { /*Permet de gérer l'animation*/
+    background-color: #610404d2;
+}
+
+
+
+/*------------------------------------------------*/
+/*------===> Mise en page principale <===--------*/
+/*------------------------------------------------*/
+
+.review-layout {
+    margin-top: 80px; /* Descend toute la section pour éviter le vide en haut */
+    display: flex;
+    justify-content: center;  /* Centre horizontalement */
+    align-items: center;       /* Centre verticalement */
+    gap: 60px;                 /* Espace entre formulaire et enveloppe */
+    min-height: 70vh;          /* Permet un centrage même sur grands écrans */
+}
+
+/*------------------------------------------------*/
+/*------===> Stylisation du formulaire <===------*/
+/*------------------------------------------------*/
+
+.review-form {
+    width: 380px; /* Largeur fixe et élégante */
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 15px;      /* Bords arrondis comme tes cards */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.review-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.review-form label {
+    font-weight: bold;
+    display: block;
+    margin-top: 12px;
+}
+
+.review-form textarea,
+.review-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    font-size: 15px;
+}
+
+.submit-button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background: #b30000; /* couleur de ton thème */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-button:hover {
+    background: #920000;
+}
+
+
+/*------------------------------------------*/
+/*--------- ENVELOPPE ANIMÉE CSS ----------*/
+/*------------------------------------------*/
+
+/* Conteneur général : enveloppe + ombre */
+.letter-image {
+    position: absolute;             /* Positionne la lettre indépendamment */
+    top: 50%;                       /* Centre verticalement */
+    right: 40px;                     /* Décalée du bord droit */
+    transform: translateY(-50%);     /* Ajuste le centrage vertical */
+    width: 260px; 
+    height: 200px;
+    cursor: pointer;                 /* Curseur interactif */
+    z-index: 10;                     /* Devant le fond triangle */
+    transition: transform 0.4s;      /* Pour que l'ombre suive la translation */
+}
+
+/* Déplacement de tout le conteneur au survol */
+.letter-image:hover {
+    transform: translateY(-50%) translateY(50px); /* Enveloppe + ombre bouge */
+}
+
+/* Ombre sous l’enveloppe */
+.letter-image .shadow {
+    position: absolute;
+    bottom: -15px;                   /* Juste sous l’enveloppe */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 30px;
+    background: radial-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0), rgba(0,0,0,0));
+    border-radius: 100%;
+    transition: width 0.4s;          /* Animation fluide au survol */
+}
+
+/* Bloc contenant toutes les parties de l’enveloppe */
+.animated-mail {
+    position: relative;
+    width: 260px;
+    height: 160px;
+    transition: 0.4s;                /* Animation fluide */
+}
+
+/* Partie triangulaire basse de l’enveloppe */
+.animated-mail .body {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 100px 260px;  /* Triangle principal */
+    border-color: transparent transparent #e95f55 transparent;
+    z-index: 2;
+}
+
+/* Rabat supérieur de l’enveloppe */
+.animated-mail .top-fold {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 50px 130px 0 130px; /* Triangle inversé */
+    border-color: #cf4a43 transparent transparent transparent;
+    transform-origin: top center; /* Pivot pour l'ouverture */
+    transition: transform .4s .4s, z-index .2s .4s;
+    z-index: 2;
+}
+
+/* Fond rectangulaire arrière */
+.animated-mail .back-fold {
+    position: absolute;
+    bottom: 0;
+    width: 260px;
+    height: 100px;
+    background: #cf4a43;
+    z-index: 0;
+}
+
+/* Pli gauche */
+.animated-mail .left-fold {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 50px 0 50px 130px;
+    border-color: transparent transparent transparent #e15349;
+    z-index: 2;
+}
+
+/* Lettre interne */
+.animated-mail .letter {
+    position: absolute;
+    left: 30px;                 /* Centrée dans l’enveloppe */
+    bottom: 0;
+    width: 200px;
+    height: 60px;
+    background: white;
+    overflow: hidden;           /* Cache ce qui dépasse */
+    z-index: 1;
+    transition: height 0.4s .2s; /* Animation de sortie de la lettre */
+}
+
+/* Bordure décorative */
+.animated-mail .letter-border {
+    height: 10px;
+    width: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        #cb5a5e,
+        #cb5a5e 8px,
+        transparent 8px,
+        transparent 18px
+    );
+}
+
+/* Ligne décorative */
+.animated-mail .letter-title {
+    margin: 10px 0 0 5px;
+    height: 10px;
+    width: 40%;
+    background: #cb5a5e;
+}
+
+/* Ligne décorative deuxième */
+.animated-mail .letter-context {
+    margin: 10px 0 0 5px;
+    height: 10px;
+    width: 20%;
+    background: #cb5a5e;
+}
+
+/* Tampon rond */
+.animated-mail .letter-stamp {
+    margin: 30px 0 0 120px;
+    height: 30px;
+    width: 30px;
+    background: #cb5a5e;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+/*------------------------------------------*/
+/*--------- ANIMATIONS AU SURVOL -----------*/
+/*------------------------------------------*/
+
+.letter-image:hover .top-fold {
+    transform: rotateX(180deg);    /* Rabat supérieur s’ouvre */
+    z-index: 0;                    /* Passe derrière */
+}
+
+.letter-image:hover .letter {
+    height: 180px;                 /* La lettre sort de l’enveloppe */
+}
+
+.letter-image:hover .shadow {
+    width: 200px;                  /* Rétrécissement de l’ombre */
+}
+
+/*------------------------------------------*/
+/*------- Confirmation envoie avis ---------*/
+/*------------------------------------------*/
+
+
+/* Message flottant en haut à droite */
+#floating-confirmation {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #28a745;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 250px;
+    font-weight: bold;
+    opacity: 0;                /* Masqué au départ */
+    pointer-events: none;       /* Non cliquable avant affichage */
+    transform: translateY(-20px);
+    transition: all 0.5s ease;
+}
+
+/* Quand actif, apparait avec animation */
+#floating-confirmation.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* Bouton de fermeture */
+#floating-confirmation #close-confirmation {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+/* Animation hover sur bouton "Envoyer" */
+.submit-btn {
+    background-color: #cf4a43;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.submit-btn:hover {
+    transform: scale(1.05);
+    background-color: #e95f55;
+}
+
+.submit-btn:active {
+    transform: scale(0.95);
+}
+
 
 /*------------------------------------------*/
 /*-------------===> FOOTER <===------------ */

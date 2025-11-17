@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="triangle-background"></div>
+    <div class="triangle-background-bottom"></div>
     <header>
         <img src="images/logo.png" alt="Logo HBNB" class="logo">
         <nav>
@@ -23,16 +25,10 @@
         <section id="reviews">
             <!-- Reviews will be populated dynamically -->
         </section>
-        <section id="add-review">
-            <h2>Add a Review</h2>
-            <form id="review-form">
-                <label for="review-text">Review:</label>
-                <textarea id="review-text" name="review-text" required></textarea>
-                
-                <button type="submit">Submit</button>
-            </form>
-        </section>
         <div class="place-details">
+            <div class="place-image">
+                <img src="images/arcachon.jpg" alt="Appartement à Arcachon">
+            </div>
             <div class="place-info">
                 <h1>Appartement à Arcachon</h1>
                 <p><strong>Hôte :</strong> Jean Poulain</p>
@@ -51,194 +47,38 @@
             </div>
         </div>
 
-        <h2>Avis des clients</h2>
-        <div class="review-card">
-            <p class="comment">"Séjour très agréable"</p>
-            <p class="user">Par : Robert Boulgourd</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
+        <h2>Avis des clients :</h2>
+        <div id="reviews-container">
             <div class="review-card">
-            <p class="comment">"Très bon logement"</p>
-            <p class="user">Par : Marie Pierre</p>
-            <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Propriètaire diponible"</p>
-            <p class="user">Par : George Thym</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Très bon emplacement"</p>
-            <p class="user">Par : Henriette Smith</p>
-            <p class="rating">⭐⭐⭐ (3/5)</p>
-        </div>
-        <a href="add_review.html" class="details-button">Ajouter un avis</a>
-        
-        <div class="place-details">
-            <div class="place-info">
-                <h1>Maison à Bordeaux</h1>
-                <p><strong>Hôte :</strong> Polos Brest</p>
-                <p><strong>Prix :</strong> 105€ / nuit</p>
-                <p><strong>Description:</strong> Maison situer dans quartier calme près des commerces, place de parking priver</p>
-
-                <h3>Équipements :</h3>
-                <ul>
-                    <li>WiFi</li>
-                    <li>Place de parking</li>
-                    <li>Four</li>
-                    <li>Lave linge</li>
-                    <li>Boite à clés</li>
-                    <li>TV</li>
-                </ul>
+                <p class="comment">"Séjour très agréable"</p>
+                <p class="user">Par : Robert Boulgourd</p>
+                <p class="rating">⭐⭐⭐⭐☆(4/5)</p>
             </div>
-        </div>
-
-        <h2>Avis des clients</h2>
-        <div class="review-card">
-            <p class="comment">"Séjour très agréable"</p>
-            <p class="user">Par : Robert Boulgourd</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
             <div class="review-card">
-            <p class="comment">"Très bon logement"</p>
-            <p class="user">Par : Marie Pierre</p>
-            <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Propriètaire diponible"</p>
-            <p class="user">Par : George Thym</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Très bon emplacement"</p>
-            <p class="user">Par : Henriette Smith</p>
-            <p class="rating">⭐⭐⭐ (3/5)</p>
-        </div>
-        <a href="add_review.html" class="details-button">Ajouter un avis</a>
-                
-        <div class="place-details">
-            <div class="place-info">
-                <h1>Maison à Agen</h1>
-                <p><strong>Hôte :</strong> Manon Petit</p>
-                <p><strong>Prix :</strong> 60€ / nuit</p>
-                <p><strong>Description:</strong> Maison près du centre et de l'église, ballade et randonnés et barbecue</p>
-
-                <h3>Équipements :</h3>
-                <ul>
-                    <li>WiFi</li>
-                    <li>Place de parking</li>
-                    <li>Four</li>
-                    <li>Lave linge</li>
-                    <li>Boite à clés</li>
-                    <li>TV</li>
-                </ul>
+                <p class="comment">"Très bon logement"</p>
+                <p class="user">Par : Marie Pierre</p>
+                <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
             </div>
-        </div>
-
-        <h2>Avis des clients</h2>
-        <div class="review-card">
-            <p class="comment">"Séjour très agréable"</p>
-            <p class="user">Par : Robert Boulgourd</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
             <div class="review-card">
-            <p class="comment">"Très bon logement"</p>
-            <p class="user">Par : Marie Pierre</p>
-            <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Propriètaire diponible"</p>
-            <p class="user">Par : George Thym</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Très bon emplacement"</p>
-            <p class="user">Par : Henriette Smith</p>
-            <p class="rating">⭐⭐⭐ (3/5)</p>
-        </div>
-        <a href="add_review.html" class="details-button">Ajouter un avis</a>
-                
-        <div class="place-details">
-            <div class="place-info">
-                <h1>Appartement à La Rochelle</h1>
-                <p><strong>Hôte :</strong> Théo Richard</p>
-                <p><strong>Prix :</strong> 75€ / nuit</p>
-                <p><strong>Description:</strong> Charmant appartement près du vieux port, possédant un balcon, proche de tout les commerces.</p>
-
-                <h3>Équipements :</h3>
-                <ul>
-                    <li>WiFi</li>
-                    <li>Place de parking</li>
-                    <li>Four</li>
-                    <li>Lave linge</li>
-                    <li>Boite à clés</li>
-                    <li>TV</li>
-                </ul>
+                <p class="comment">"Très bon emplacement"</p>
+                <p class="user">Par : Henriette Smith</p>
+                <p class="rating">⭐⭐⭐☆☆(3/5)</p>
             </div>
-        </div>
-
-        <h2>Avis des clients</h2>
-        <div class="review-card">
-            <p class="comment">"Séjour très agréable"</p>
-            <p class="user">Par : Robert Boulgourd</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
             <div class="review-card">
-            <p class="comment">"Très bon logement"</p>
-            <p class="user">Par : Marie Pierre</p>
-            <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Propriètaire diponible"</p>
-            <p class="user">Par : George Thym</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Très bon emplacement"</p>
-            <p class="user">Par : Henriette Smith</p>
-            <p class="rating">⭐⭐⭐ (3/5)</p>
-        </div>
-        <a href="add_review.html" class="details-button">Ajouter un avis</a>
-                
-        <div class="place-details">
-            <div class="place-info">
-                <h1>Appartement à Limoges</h1>
-                <p><strong>Hôte :</strong> Laure Marie</p>
-                <p><strong>Prix :</strong> 65€ / nuit</p>
-                <p><strong>Description:</strong> Appartement calmes, situés en centre ville, avec la ligne de bus à proximités.</p>
-
-                <h3>Équipements :</h3>
-                <ul>
-                    <li>WiFi</li>
-                    <li>Place de parking</li>
-                    <li>Four</li>
-                    <li>Lave linge</li>
-                    <li>Boite à clés</li>
-                    <li>TV</li>
-                </ul>
+                <p class="comment">"Très bon logement, le cadre est idéal pour un moment de repos"</p>
+                <p class="user">Par : Anne Bodin</p>
+                <p class="rating">⭐⭐⭐⭐☆(4/5)</p>
             </div>
-        </div>
-
-        <h2>Avis des clients</h2>
-        <div class="review-card">
-            <p class="comment">"Séjour très agréable"</p>
-            <p class="user">Par : Robert Boulgourd</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
             <div class="review-card">
-            <p class="comment">"Très bon logement"</p>
-            <p class="user">Par : Marie Pierre</p>
-            <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
-        </div>
+                <p class="comment">"La boulangerie au coin de la rue est très chouette"</p>
+                <p class="user">Par : Tom Buturnut</p>
+                <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
+            </div>
             <div class="review-card">
-            <p class="comment">"Propriètaire diponible"</p>
-            <p class="user">Par : George Thym</p>
-            <p class="rating">⭐⭐⭐⭐ (4/5)</p>
-        </div>
-            <div class="review-card">
-            <p class="comment">"Très bon emplacement"</p>
-            <p class="user">Par : Henriette Smith</p>
-            <p class="rating">⭐⭐⭐ (3/5)</p>
+                <p class="comment">"Manque de climatisation en été, sinon logment très calme"</p>
+                <p class="user">Par : Randy Marsh</p>
+                <p class="rating">⭐⭐⭐☆☆(3/5)</p>
+            </div>
         </div>
         <a href="add_review.html" class="details-button">Ajouter un avis</a>
     </main>

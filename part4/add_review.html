@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="triangle-background"></div>
+    <div class="triangle-background-bottom"></div>
     <header>
         <img src="images/logo.png" alt="Logo HBNB" class="logo">
         <nav>
@@ -17,17 +19,53 @@
         <a href="login.html" class="login-button">Login</a>
     </header>
     <main>
-        <!-- Add something to idfentify the place you're reviewing -->
-        <form id="review-form">
-            <h2>Add a Review</h2>
-            <label for="review">Your Review:</label>
-            <textarea id="review" name="review" required></textarea>
-            <label for="rating">Rating:</label>
-            <select id="rating" name="rating" required>
-                <!-- Options for rating -->
-            </select>
-            <button type="submit">Submit Review</button>
-        </form>
+        <div class="review-layout">
+
+            <!-- Formulaire d'ajout d'avis -->
+            <form id="review-form" class="review-form">
+                <h2>Ajouter un avis</h2>
+
+                <label for="review">Votre avis :</label>
+                <textarea id="review" name="review" required></textarea>
+
+                <label for="rating">Note :</label>
+                <select id="rating" name="rating" required>
+                    <option value="5">5 ⭐</option>
+                    <option value="4">4 ⭐</option>
+                    <option value="3">3 ⭐</option>
+                    <option value="2">2 ⭐</option>
+                    <option value="1">1 ⭐</option>
+                </select>
+
+                <button type="submit" class="submit-button">Envoyer</button>
+            </form>
+
+            <div id="floating-confirmation">
+                <span id="confirmation-text">Merci, votre avis a été envoyé !</span>
+                <button id="close-confirmation">&times;</button>
+            </div>
+
+            <!-- Enveloppe animée -->
+            <div class="letter-image">
+                <div class="animated-mail">
+                    <div class="back-fold"></div>
+
+                    <div class="letter">
+                        <div class="letter-border"></div>
+                        <div class="letter-title"></div>
+                        <div class="letter-context"></div>
+                        <div class="letter-stamp"></div>
+                    </div>
+
+                    <div class="top-fold"></div>
+                    <div class="body"></div>
+                    <div class="left-fold"></div>
+                </div>
+
+                <div class="shadow"></div>
+            </div>
+
+        </div>
     </main>
     <script src="scripts.js"></script>
     <footer>
