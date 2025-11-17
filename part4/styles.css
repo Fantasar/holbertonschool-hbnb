@@ -2,16 +2,18 @@
 /*------------===> CSS BASE <===------------*/
 /*------------------------------------------*/
 
-* {
+*, *:before, *:after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
 }
 
 body {
     background-color: #f4f4f4;
     color: #333;
+    font-family: 'Raleway', Arial, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden; /* Empêche le scroll horizontal */
 }
 
 /*------------------------------------------*/
@@ -25,6 +27,8 @@ header {
     display: flex; /* Organisation en ligne*/
     justify-content: space-between; /* Espace entre les éléments */
     align-items: center; /* Centrage vertical*/
+    position: relative; /* Important pour rester au dessus des triangles */
+    z-index: 100; /* Au dessus de tout */
 }
 
 /*------------------------------------------*/
@@ -74,6 +78,189 @@ nav a:hover { /*Permet de gérer l'animation*/
 .login-button:hover { /*Permet de gérer l'animation*/
     background-color: #610404d2;
 }
+
+
+/*------------------------------------------*/
+/*---------===> LOGIN CONTAINER <===------- */
+/*------------------------------------------*/
+
+/* Conteneur principal qui occupe tout l'écran */
+.login-container {
+    position: fixed; /* Fixé pour couvrir tout l'écran */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Cache les débordements des triangles */
+    padding-top: 80px; /* Espace pour le header */
+}
+
+/* Au hover ou au clic du conteneur, les triangles s'ouvrent */
+.login-container:hover .top:before,
+.login-container:hover .top:after,
+.login-container:hover .bottom:before,
+.login-container:hover .bottom:after,
+.login-container:active .top:before,
+.login-container:active .top:after,
+.login-container:active .bottom:before,
+.login-container:active .bottom:after {
+    margin-left: 200px; /* Décale les triangles vers la droite */
+    transform-origin: -200px 50%; /* Point de pivot pour la rotation */
+    transition-delay: 0s; /* Pas de délai au hover */
+}
+
+/* Au hover/clic, le formulaire apparaît */
+.login-container:hover .center,
+.login-container:active .center {
+    opacity: 1; /* Devient visible */
+    transition-delay: 0.2s; /* Apparaît après l'ouverture des triangles */
+}
+
+/*------------------------------------------*/
+/*----------===> TRIANGLES TOP <===-------- */
+/*------------------------------------------*/
+
+.top:before,
+.top:after,
+.bottom:before,
+.bottom:after {
+    content: ''; /* Nécessaire pour créer un pseudo-élément */
+    display: block;
+    position: absolute;
+    width: 200vmax; /* 200 fois la largeur/hauteur max de l'écran = ÉNORME */
+    height: 200vmax;
+    top: 50%; /* Centre verticalement */
+    left: 50%; /* Centre horizontalement */
+    margin-top: -100vmax; /* Recentre en tenant compte de la taille */
+    transform-origin: 0 50%; /* Point de pivot à gauche-centre */
+    transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1); /* Animation fluide */
+    z-index: 10; /* Au dessus du fond mais sous le formulaire */
+    opacity: 0.65; /* Semi-transparent */
+    transition-delay: 0.2s; /* Délai avant la fermeture */
+}
+
+/* Triangle rouge en haut à gauche */
+.top:before {
+    transform: rotate(45deg); /* Rotation de 45° */
+    background: #e46569; /* Rouge corail */
+}
+
+/* Triangle orange en haut à droite */
+.top:after {
+    transform: rotate(135deg); /* Rotation de 135° */
+    background: #ecaf81; /* Orange pêche */
+}
+
+/*------------------------------------------*/
+/*--------===> TRIANGLES BOTTOM <===------- */
+/*------------------------------------------*/
+
+/* Triangle bleu en bas à gauche */
+.bottom:before {
+    transform: rotate(-45deg); /* Rotation de -45° */
+    background: #60b8d4; /* Bleu clair */
+}
+
+/* Triangle bleu foncé en bas à droite */
+.bottom:after {
+    transform: rotate(-135deg); /* Rotation de -135° */
+    background: #3745b5; /* Bleu roi */
+}
+
+/*------------------------------------------*/
+/*----------===> FORM CENTER <===---------- */
+/*------------------------------------------*/
+
+.center {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    top: 50%;
+    left: 50%;
+    margin-left: -200px; /* Centre horizontalement (largeur/2) */
+    margin-top: -200px; /* Centre verticalement (hauteur/2) */
+    display: flex;
+    flex-direction: column; /* Organise les éléments en colonne */
+    justify-content: center; /* Centre verticalement le contenu */
+    align-items: center; /* Centre horizontalement le contenu */
+    padding: 30px;
+    opacity: 0; /* Invisible par défaut */
+    transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1);
+    transition-delay: 0s; /* Disparaît immédiatement quand on sort */
+    color: #333;
+    z-index: 20; /* Au dessus des triangles */
+}
+
+.center h2 {
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.center input {
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.center input:focus {
+    outline: none; /* Retire la bordure bleue par défaut */
+    border-color: #920707; /* Bordure rouge au focus */
+}
+
+.center button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 15px;
+    background: linear-gradient(135deg, #920707 0%, #610404 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(146, 7, 7, 0.4);
+}
+
+.center button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(146, 7, 7, 0.6);
+}
+
+.center button:active {
+    transform: translateY(0);
+}
+
+
+/*------------------------------------------*/
+/*--------===> RESPONSIVE DESIGN <===------ */
+/*------------------------------------------*/
+
+@media (max-width: 768px) {
+    .center {
+    width: 90%;
+    height: auto;
+    margin-left: -45%; /* Recentre pour les petits écrans */
+    padding: 20px;
+    }
+
+    header {
+    flex-direction: column;
+    gap: 1rem;
+    }
+
+    nav {
+    flex-direction: column;
+    align-items: center;
+    }
+}
+
 
 /*------------------------------------------*/
 /*----------===> PLACE CARD <===----------- */
@@ -182,4 +369,5 @@ footer { /* Permet de gérer le bas de page */
     position: fixed;
     bottom: 0;
     width: 100%;
+    z-index: 100; /* Au dessus des triangles */
 }
