@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,18 +17,24 @@
         </nav>
         <a href="login.html" class="login-button">Login</a>
     </header>
-    <main>
-        <form id="login-form">
-            <h2>Login</h2>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            
-            <button type="submit">Login</button>
-        </form>
-    </main>
+    <!-- ⭐ IMPORTANT : Conteneur pour l'animation des triangles -->
+    <div class="login-container">
+        <!-- Triangles du haut (rouge et orange) -->
+        <div class="top"></div>
+        
+        <!-- Triangles du bas (bleus) -->
+        <div class="bottom"></div>
+        
+        <!-- Formulaire au centre -->
+        <div class="center">
+            <form id="login-form">
+                <h2>Please Sign In</h2>
+                <input type="email" id="email" name="email" placeholder="email" required>
+                <input type="password" id="password" name="password" placeholder="password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
     <script src="scripts.js"></script>
     <footer>
         <p>&copy; 2024 HBNB. All rights reserved.</p>
