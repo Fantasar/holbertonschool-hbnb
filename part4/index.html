@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Places</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="images/logo.png" alt="Logo HBNB" class="logo">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="add_review.html">Review</a>
+            <a href="place.html">Place</a>
+        </nav>
+        <a href="login.html" class="login-button">Login</a>
+    </header>
+    <main>
+        <section id="filter">
+            <label for="price-filter">Max Price:</label>
+            <select id="price-filter">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </section>
+        <section id="places-list">
+            <!-- List of places will be populated dynamically -->
+        </section>
+        <!-- Différentes Carte de logements-->
+        <h1>Nos locations disponibles, pour vos weekend ...</h1>
+        <div class="place-card">
+            <h2>Appartement à Arcachon</h2>
+            <p> Charmant appartement près du port,pour ballade et moment de détente.</p>
+            <p class="prix">90€ / nuit</p>
+            <p class="couchage">4 personnes</p>
+            <button class="details-button">Plus d'infos</button>
+        </div>
+            <div class="place-card">
+            <h2>Maison à Bordeaux</h2>
+            <p> Maison situer dans quartier calme près des commerces, place de parking priver</p>
+            <p class="prix">105€ / nuit</p>
+            <p class="couchage">6 personnes</p>
+            <button class="details-button">Plus d'infos</button>
+        </div>
+            <div class="place-card">
+            <h2>Maison à Agen</h2>
+            <p> Maison près du centre et de l'église, ballade et randonnés et barbecue</p>
+            <p class="prix">60€ / nuit</p>
+            <p class="couchage">8 personnes</p>
+            <button class="details-button">Plus d'infos</button>
+        </div>
+            <div class="place-card">
+            <h2>Appartement à La Rochelle</h2>
+            <p> Charmant appartement près du vieux port, possédant un balcon, proche de tout les commerces.</p>
+            <p class="prix">75€ / nuit</p>
+            <p class="couchage">4 personnes</p>
+            <button class="details-button">Plus d'infos</button>
+        </div>
+            <div class="place-card">
+            <h2>Appartement à Limoges</h2>
+            <p> Appartement calmes, situés en centre ville, avec la ligne de bus à proximités.</p>
+            <p class="prix">65€ / nuit</p>
+            <p class="couchage">6 personnes</p>
+            <button class="details-button">Plus d'infos</button>
+        </div>
+    </main>
+    <script src="scripts.js"></script>
+    <footer>
+        <p>&copy; 2024 HBNB. All rights reserved.</p>
+    </footer>
+</body>
+</html>

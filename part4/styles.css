@@ -1,0 +1,185 @@
+/*------------------------------------------*/
+/*------------===> CSS BASE <===------------*/
+/*------------------------------------------*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/*------------------------------------------*/
+/*-------------===> HEADER <===-------------*/
+/*------------------------------------------*/
+
+header {
+    background-color: #ffffff6e;
+    color: #fff;
+    padding: 1rem;
+    display: flex; /* Organisation en ligne*/
+    justify-content: space-between; /* Espace entre les éléments */
+    align-items: center; /* Centrage vertical*/
+}
+
+/*------------------------------------------*/
+/*------------===> LOGO <===--------------- */
+/*------------------------------------------*/
+
+.logo {
+    width: 170px;
+    height: auto;
+}
+
+/*------------------------------------------*/
+/*------------===> NAVIGATION <===--------- */
+/*------------------------------------------*/
+
+nav {
+    display: flex;
+    gap: 1rem; /* Espace entre les liens de navigations */
+}
+
+nav a {
+    color: #92070783;
+    text-decoration: none; /* Permet de souligner du texte */
+    padding : 0.5rem 1rem;
+    transition: background-color 0.3s; /*Animation de coloration au survol*/
+}
+
+nav a:hover { /*Permet de gérer l'animation*/
+    background-color: #555;
+    border-radius: 5px;
+}
+
+/*------------------------------------------*/
+/*----------===> LOGIN BUTONS <===--------- */
+/*------------------------------------------*/
+
+.login-button {
+    padding: 12px 40px; /* Permet de gérer la longeur et la largeur du bouton */
+    background-color: #92070783;
+    color: white;
+    text-decoration: none; /* Permet de souligner du texte */
+    border-radius: 30px; /* Permet d'arrondir le bouton */
+    font-weight: bold; /* Permet de mettre le texte en gras */
+    transition: background-color 0.3s; /*Animation de coloration au survol*/    
+}
+
+.login-button:hover { /*Permet de gérer l'animation*/
+    background-color: #610404d2;
+}
+
+/*------------------------------------------*/
+/*----------===> PLACE CARD <===----------- */
+/*------------------------------------------*/
+
+.place-card {
+    margin: 20px; /* Espace autour de la carte */
+    padding: 10px; /* Espace à l'intérieur de la carte */
+    border: 1px solid #ddd; /*Couleur de la bordure */
+    border-radius: 10px; /*Permet d'arrondir les bords de la carte*/
+    background-color: white;
+}
+
+.review-card {
+    margin: 20px; /* Espace autour de la carte */
+    padding: 10px; /* Espace à l'intérieur de la carte */
+    border: 1px solid #ddd; /*Couleur de la bordure */
+    border-radius: 10px; /*Permet d'arrondir les bords de la carte*/
+    background-color: #f9f9f9;
+}
+
+.review-card .comment { /* Permet de gérer la partie commentaire */
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.review-card .user { /* Permet de gérer la partie auteur */
+    font-weight: bold;
+}
+
+.review-card .rating { /* Code couleur de la note */
+    color: #ff9800;
+}
+
+/*------------------------------------------*/
+/*------===> Add Review Button <===-------- */
+/*------------------------------------------*/
+
+.details-button {
+    padding: 8px 16px; /* Permet de gérer la longeur et la largeur du bouton */
+    background-color: #5aa7fa;
+    color: white;
+    border: none; /*Couleur de la bordure */
+    border-radius: 30px; /* Permet d'arrondir le bouton */
+    cursor: pointer; /* Indique la forme du curseur au survol */
+    text-decoration: none; /* Permet de souligner du texte */
+    display: inline-block;
+    font-weight: bold; /* Permet de mettre le texte en gras */
+    transition: background-color 0.3s; /*Animation de coloration au survol*/
+}
+
+.details-button:hover { /*Permet de gérer l'animation*/
+    background-color: #0056b3;
+}
+
+/*------------------------------------------*/
+/*---------===> Place Infos <===----------- */
+/*------------------------------------------*/
+
+.place-details {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.place-info h1 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.place-info p {
+    margin: 11px 0;
+}
+
+.place-info ul {
+    list-style:none; /* Permet de gérer le logos devants une listes à points */
+    padding-left: 0;
+}
+
+.place-info li:before { /* Permet de remplacer les points par des check */
+    content: "✓";
+    color: green;
+}
+
+/*------------------------------------------*/
+/*--------------===> MAIN <===------------- */
+/*------------------------------------------*/
+
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto; /* Geres l'indentation de la page */
+}
+
+/*------------------------------------------*/
+/*-------------===> FOOTER <===------------ */
+/*------------------------------------------*/
+
+footer { /* Permet de gérer le bas de page */
+    background-color: #333333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

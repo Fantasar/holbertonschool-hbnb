@@ -1,0 +1,174 @@
+from flask_restx import Namespace, Resource, fields
+from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from app.api.v1.users import admin_api
+
+api = Namespace('amenities', description='Amenity operations')
+
+# Définition du modèle 'Amenity' pour la validation des données et la documentation
+# Ce modèle est utilisé pour valider les entrées lors de la création ou de la mise à jour
+amenity_model = api.model('Amenity', {
+    'name': fields.String(required=True, description='Name of the amenity')
+})
+
+@admin_api.route('/')
+class AmenityList(Resource):
+    @admin_api.expect(amenity_model)
+    @admin_api.response(201, 'Amenity successfully created')
+    @admin_api.response(400, 'Invalid input data')
+    def post(self):
+        """Register a new amenity"""
+        amenity_data = api.payload
+        # Vérification d'administration attendue : on suppose la présence de 'claims'
+        # Normalement les claims viennent de get_jwt() dans un contexte protégé
+        is_admin = claims.get('is_admin', False)
+        existing_amenity = facade.amenity_repo.get_by_attribute('name', amenity_data.get('name'))
+        if existing_amenity:
+            return {'error': 'Invalid input data'}, 400
+        try:
+            new_amenity = facade.create_amenity(amenity_data)
+            return new_amenity.to_dict(), 201
+        except Exception as e:
+            return {'error': str(e)}, 400
+
+    @admin_api.response(200, 'List of amenities retrieved successfully')
+    def get(self):
+        """Retrieve a list of all amenities"""
+        amenities = facade.get_all_amenities()
+        return [amenity.to_dict() for amenity in amenities], 200
+
+@admin_api.route('/amenities/<amenity_id>')
+class AdminAmenityModify(Resource):
+    @admin_api.expect(amenity_model)
+    @admin_api.response(200, 'Amenity successfully created')
+    @admin_api.response(400, 'Invalid input data')
+    @admin_api.response(403, 'Admin privileges required')
+    @admin_api.response(404, 'Amenity not found')
+    @jwt_required()
+    def put(self, amenity_id):
+        """Update an amenity (admin only)"""
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        if not is_admin:
+            return {'error': 'Admin privileges required'}, 403
+
+        amenity = facade.get_amenity(amenity_id)  # Récupère l'amenity via la facade
+
+        if not amenity:
+            return {'error': 'Amenity not found'}, 404
+
+        amenity_data = admin_api.payload
+
+        # Logique : mettre à jour les champs de l'amenity via la facade
+        try:
+            facade.update_amenity(amenity_id, amenity_data)
+            return {'message': 'Amenity updated successfully'}, 200
+        except Exception as e:
+            return {'error': str(e)}, 400
+
+@admin_api.route('/amenities/')
+class AdminAmenityCreate(Resource):
+    @admin_api.expect(amenity_model)  # Spécifie le modèle attendu pour la documentation Swagger
+    @admin_api.response(201, 'amenity created successfully')
+    @admin_api.response(400, 'Invalid input data')
+    @admin_api.response(403, 'Admin privileges required')
+    @jwt_required()
+    def post(self):
+        claims = get_jwt()
+    
+        if not claims.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
+
+        amenity_data = admin_api.payload
+
+        existing_amenity = facade.amenity_repo.get_by_attribute('name', amenity_data.get('name'))
+        if existing_amenity:
+            return {'error': 'Amenity already exists'}, 400
+
+        # Logique : création d'un nouvel équipement via la couche facade
+        try:
+            new_amenity = facade.create_amenity(amenity_data)
+            return new_amenity.to_dict(), 201
+        except Exception as e:
+            return {'error': str(e)}, 400
+
+    @admin_api.response(200, 'List of amenities retrieved successfully')
+    def get(self):
+        """Retrieve a list of all amenities (PUBLIC via admin namespace)"""
+        amenities = facade.get_all_amenities()
+        return [amenity.to_dict() for amenity in amenities], 200
+
+@api.route('/<amenity_id>')
+class AmenityResource(Resource):
+    @api.response(200, 'Amenity details retrieved successfully')
+    @api.response(404, 'Amenity not found')
+    def get(self, amenity_id):
+        """Get amenity details by ID"""
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {'error': 'Amenity not found'}, 404
+        return amenity.to_dict(), 200
+
+    @api.expect(amenity_model)
+    @api.response(200, 'Amenity updated successfully')
+    @api.response(404, 'Amenity not found')
+    @api.response(400, 'Invalid input data')
+    @jwt_required()
+    def put(self, amenity_id):
+        amenity_data = api.payload
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {'error': 'Amenity not found'}, 404
+        try:
+            facade.update_amenity(amenity_id, amenity_data)
+            return {"message": "Amenity updated successfully"}, 200
+        except Exception as e:
+            return {'error': str(e)}, 400
+
+    @api.response(200, 'Amenities deleted successfully')
+    @api.response(404, 'Amenities not found')
+    # Protège l'endpoint : nécessite un token JWT valide
+    @jwt_required()
+    def delete(self, amenity_id):
+        """Delete a Amenities"""
+        # Récupère l'ID de l'utilisateur authentifié depuis le token JWT
+        current_user = get_jwt_identity()
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {'error': 'Amenities not found'}, 404
+                # Vérifie que l'utilisateur connecté est autorisé (propriétaire/auteur selon le modèle)
+        if amenity.user.id != current_user:
+            return {'error': 'Unauthorized action'}, 403
+
+        try:
+            facade.delete_amenity(amenity_id)
+            return {'message': 'amenities deleted successfully'}, 200
+        except Exception as e:
+            return {'error': str(e)}, 400
+@api.route('/')
+class AmenityListResource(Resource):
+    @api.expect(amenity_model)
+    @api.response(201, 'Amenity successfully created')
+    @api.response(400, 'Invalid input data')
+
+    def post(self):
+        """Register a new amenity"""
+        amenity_data = api.payload
+        
+        existing_amenity = facade.amenity_repo.get_by_attribute('name', amenity_data.get('name'))
+        if existing_amenity:
+            return {'error': 'Invalid input data'}, 400
+        try:
+            new_amenity = facade.create_amenity(amenity_data)
+            return new_amenity.to_dict(), 201
+        except Exception as e:
+            return {'error': str(e)}, 400
+
+@api.route('/')
+class AmenityList(Resource):
+    @api.response(200, 'List of amenities retrieved successfully')
+    def get(self):
+        """Retrieve a list of all amenities (PUBLIC)"""
+        amenities = facade.get_all_amenities()
+        return [amenity.to_dict() for amenity in amenities], 200
