@@ -25,7 +25,7 @@ header {
     color: #fff;
     padding: 1rem;
     display: flex; /* Organisation en ligne*/
-    justify-content: space-between; /* Espace entre les éléments */
+    justify-content: space-between; /* Gestion des emplacement des élèments nav */
     align-items: center; /* Centrage vertical*/
     position: relative; /* Important pour rester au dessus des triangles */
     z-index: 100; /* Au dessus de tout */
@@ -36,8 +36,9 @@ header {
 /*------------------------------------------*/
 
 .logo {
-    width: 170px;
+    width: 150px;
     height: auto;
+    flex-shrink: 0; /* Empêche le logo de rétrécir */
 }
 
 /*------------------------------------------*/
@@ -46,7 +47,9 @@ header {
 
 nav {
     display: flex;
-    gap: 5rem; /* Espace entre les liens de navigations */
+    gap: 2rem; /* Espace entre les liens de navigations */
+    flex: 1; /* Permet de couvrir touts l'espace disponible */
+    justify-content: center; /* Centre les liens */
 }
 
 nav a {
@@ -57,10 +60,21 @@ nav a {
     border-radius: 30px; /* Permet d'arrondir le bouton */
     font-weight: bold; /* Permet de mettre le texte en gras */
     transition: background-color 0.3s; /*Animation de coloration au survol*/
+    white-space: nowrap; /* Empeche le texte de passer à la ligne */
 }
 
 nav a:hover { /*Permet de gérer l'animation*/
     background-color: #610404d2;
+}
+
+/*------------------------------------------*/
+/*------------===> NAVIGATION <===--------- */
+/*------------------------------------------*/
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0; /* Empêche les boutons de rétrécir */
 }
 
 .login-button,
@@ -74,6 +88,7 @@ nav a:hover { /*Permet de gérer l'animation*/
     font-size: 16px;
     font-family: inherit;
     transition: background-color 0.3s;
+    white-space: nowrap;
 }
 
 .login-button {
@@ -532,10 +547,10 @@ nav .logout-button {
 /*------------------------------------------*/
 
 .place-details {
-    margin: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    max-width: 1200px;
+    margin: 20px auto;  /* ✅ Ajout de "auto" pour centrer */
+    padding: 20px;
+    border-radius: 15px;
     background-color: white;
 }
 
@@ -556,6 +571,29 @@ nav .logout-button {
 .place-info li:before { /* Permet de remplacer les points par des check */
     content: "✓";
     color: green;
+}
+
+/*------------------------------------------*/
+/*-----===> IMAGE PAGE DETAILS <===-------- */
+/*------------------------------------------*/
+
+/* ✅ NOUVEAU : Style spécifique pour l'image dans place-info */
+.place-info img.place-img {
+    width: 100%;              /* Prend toute la largeur */
+    max-width: 800px;         /* Maximum 800px */
+    height: 400px;            /* Hauteur fixe */
+    object-fit: cover;        /* Recadre sans déformer */
+    border-radius: 15px;
+    margin: 0 auto 30px;      /* Centre l'image */
+    display: block;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Responsive : plus petite sur mobile */
+@media (max-width: 768px) {
+    .place-info img.place-img {
+        height: 250px;
+    }
 }
 
 /*------------------------------------------*/
@@ -600,8 +638,6 @@ main > h2 {
 main > h2:hover { /*Permet de gérer l'animation*/
     background-color: #610404d2;
 }
-
-
 
 /*------------------------------------------------*/
 /*------===> Mise en page principale <===--------*/

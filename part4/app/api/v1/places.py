@@ -118,7 +118,50 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        return place.to_dict(), 200
+        # ✅ Construction manuelle avec toutes les relations
+        response_data = {
+            'id': place.id,
+            'title': place.title,
+            'name': place.title,
+            'description': place.description,
+            'price': float(place.price) if place.price else 0,
+            'latitude': float(place.latitude) if place.latitude else 0,
+            'longitude': float(place.longitude) if place.longitude else 0,
+        }
+        
+        # ✅ AJOUT DES INFOS DU HOST
+        if place.owner:
+            response_data['host'] = {
+                'id': place.owner.id,
+                'first_name': place.owner.first_name,
+                'last_name': place.owner.last_name,
+                'email': place.owner.email
+            }
+        else:
+            response_data['host'] = None
+        
+        # ✅ AJOUT DES AMENITIES
+        response_data['amenities'] = []
+        if hasattr(place, 'amenities') and place.amenities:
+            response_data['amenities'] = [
+                amenity.name for amenity in place.amenities
+            ]
+        
+        # ✅ AJOUT DES REVIEWS
+        response_data['reviews'] = []
+        if hasattr(place, 'reviews') and place.reviews:
+            response_data['reviews'] = [
+                {
+                    'id': review.id,
+                    'comment': review.text,
+                    'rating': review.rating,
+                    'user': review.user.first_name if review.user else 'Anonyme',
+                    'created_at': review.created_at.isoformat() if hasattr(review, 'created_at') else None
+                }
+                for review in place.reviews
+            ]
+        
+        return response_data, 200
 
     @places_api.expect(place_model)
     @places_api.response(200, 'Place updated successfully')

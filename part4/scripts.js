@@ -260,18 +260,18 @@ async function loginUser(email, password) {
  */
 function checkAuthentication() {
     const token = getCookie('token');
-    const loginButton = document.querySelector('.login-button');
+    const loginButton = document.getElementById('login-link');
     const logoutButton = document.getElementById('logout-button');
     
     if (loginButton) {
         if (token) {
             // Utilisateur connecté : cacher le bouton login
-            loginButton.style.display = 'none';
-            if (logoutButton) logoutButton.style.display = 'block';
+            if (loginButton) loginButton.style.display = 'none';
+            if (logoutButton) logoutButton.style.display = 'inline-block';
             console.log('✅ Utilisateur authentifié');
         } else {
             // Utilisateur non connecté : afficher le bouton login
-            loginButton.style.display = 'block';
+            if (loginButton) loginButton.style.display = 'inline-block';
             if (logoutButton) logoutButton.style.display = 'none';
             console.log('❌ Utilisateur non authentifié');
         }
@@ -287,9 +287,9 @@ function loadPriceFilterOptions() {
     
     const options = [
         { value: 'all', text: 'All' },
+        { value: '10', text: '10€' },
         { value: '50', text: '50€' },
-        { value: '100', text: '100€' },
-        { value: '150', text: '150€' }
+        { value: '100', text: '100€' }
     ];
     
     // Vider le select
@@ -447,8 +447,6 @@ function viewPlaceDetails(placeId) {
     // Redirection vers la page de détails (à implémenter plus tard)
     window.location.href = `place.html?id=${placeId}`;
 }
-
-
 
 
 /*============================================*/
