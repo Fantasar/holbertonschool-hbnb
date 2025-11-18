@@ -12,6 +12,25 @@ const API_LOGIN_ENDPOINT = `${API_BASE_URL}/auth/login`;
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Site HBNB chargé avec succès !');
 
+
+    /*------------------------------------------*/
+    /*---===> GESTION PAGE INDEX.HTML <===-----*/
+    /*------------------------------------------*/
+    
+    const placesList = document.getElementById('places-list');
+    const priceFilter = document.getElementById('price-filter');
+    
+    if (placesList) {
+        console.log('📍 Page index détectée');
+        checkAuthentication();
+        loadPriceFilterOptions();
+        fetchPlaces();
+        
+        if (priceFilter) {
+            priceFilter.addEventListener('change', filterPlacesByPrice);
+        }
+    }
+
     /*------------------------------------------*/
     /*--------===> GESTION DU LOGIN <===------- */
     /*------------------------------------------*/
@@ -230,6 +249,207 @@ async function loginUser(email, password) {
         return false;
     }
 }
+
+
+/*============================================*/
+/*===== GESTION DE LA PAGE INDEX =============*/
+/*============================================*/
+
+/**
+ * Vérifie l'authentification et affiche/cache le bouton login
+ */
+function checkAuthentication() {
+    const token = getCookie('token');
+    const loginButton = document.querySelector('.login-button');
+    const logoutButton = document.getElementById('logout-button');
+    
+    if (loginButton) {
+        if (token) {
+            // Utilisateur connecté : cacher le bouton login
+            loginButton.style.display = 'none';
+            if (logoutButton) logoutButton.style.display = 'block';
+            console.log('✅ Utilisateur authentifié');
+        } else {
+            // Utilisateur non connecté : afficher le bouton login
+            loginButton.style.display = 'block';
+            if (logoutButton) logoutButton.style.display = 'none';
+            console.log('❌ Utilisateur non authentifié');
+        }
+    }
+}
+
+/**
+ * Charge les options du filtre de prix
+ */
+function loadPriceFilterOptions() {
+    const priceFilter = document.getElementById('price-filter');
+    if (!priceFilter) return;
+    
+    const options = [
+        { value: 'all', text: 'All' },
+        { value: '50', text: '50€' },
+        { value: '100', text: '100€' },
+        { value: '150', text: '150€' }
+    ];
+    
+    // Vider le select
+    priceFilter.innerHTML = '';
+    
+    // Ajouter les options
+    options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.text;
+        priceFilter.appendChild(option);
+    });
+}
+
+/**
+ * Récupère la liste des places depuis l'API
+ */
+async function fetchPlaces() {
+    const token = getCookie('token');
+    
+    console.log('📡 Récupération des places...');
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/places/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // Ajouter le token si disponible (optionnel pour GET /places/)
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        });
+        
+        if (response.ok) {
+            const places = await response.json();
+            console.log('✅ Places récupérées:', places.length);
+            displayPlaces(places);
+        } else {
+            console.error('❌ Erreur lors de la récupération des places:', response.status);
+            showError('Impossible de charger les logements');
+        }
+    } catch (error) {
+        console.error('❌ Erreur réseau:', error);
+        showError('Erreur de connexion au serveur');
+    }
+}
+
+/**
+ * Affiche les places dans le DOM
+ * @param {Array} places - Liste des places à afficher
+ */
+function displayPlaces(places) {
+    const placesList = document.getElementById('places-list');
+    if (!placesList) return;
+    
+    // Vider la liste actuelle (supprimer les exemples statiques)
+    placesList.innerHTML = '';
+    
+    if (places.length === 0) {
+        placesList.innerHTML = '<p style="text-align: center; color: #666;">Aucun logement disponible pour le moment.</p>';
+        return;
+    }
+    
+    // Créer une carte pour chaque place
+    places.forEach(place => {
+        const placeCard = createPlaceCard(place);
+        placesList.appendChild(placeCard);
+    });
+}
+
+/**
+ * Crée une carte HTML pour une place avec gestion intelligente des images
+ * @param {Object} place - Données de la place
+ * @returns {HTMLElement} - Element div de la carte
+ */
+function createPlaceCard(place) {
+    const card = document.createElement('div');
+    card.className = 'place-card';
+    card.dataset.price = place.price; // Stocker le prix pour le filtrage
+    
+    // Mapping des images par ville (pour garder tes images statiques)
+    const imageMapping = {
+        'arcachon': 'images/arcachon.jpg',
+        'bordeaux': 'images/bordeaux.avif',
+        'agen': 'images/agen.jpg',
+        'la rochelle': 'images/la_rochelle.jpg',
+        'rochelle': 'images/la_rochelle.jpg',
+        'limoges': 'images/limoges.jpg'
+    };
+    
+    // Essayer de trouver une image correspondante
+    let imageUrl = place.image_url || 'images/default-place.jpg';
+    
+    // Si pas d'image_url dans l'API, chercher dans le mapping
+    if (!place.image_url) {
+        const titleLower = place.title.toLowerCase();
+        
+        // Chercher si une ville correspond dans le titre
+        for (const [city, img] of Object.entries(imageMapping)) {
+            if (titleLower.includes(city)) {
+                imageUrl = img;
+                break;
+            }
+        }
+    }
+    
+    card.innerHTML = `
+        <img src="${imageUrl}" alt="${place.title}" class="place-img" onerror="this.src='images/default-place.jpg'">
+        <h2>${place.title}</h2>
+        <p>${place.description || 'Aucune description disponible'}</p>
+        <p class="prix">${place.price}€ / nuit</p>
+        <p class="location">📍 ${place.latitude.toFixed(4)}, ${place.longitude.toFixed(4)}</p>
+        <button class="details-button" onclick="viewPlaceDetails('${place.id}')">Plus d'infos</button>
+    `;
+    
+    return card;
+}
+
+/**
+ * Filtre les places affichées selon le prix sélectionné
+ */
+function filterPlacesByPrice() {
+    const priceFilter = document.getElementById('price-filter');
+    const selectedPrice = priceFilter.value;
+    
+    console.log('🔍 Filtrage par prix:', selectedPrice);
+    
+    // Récupérer toutes les cartes de places
+    const placeCards = document.querySelectorAll('.place-card');
+    
+    placeCards.forEach(card => {
+        const placePrice = parseFloat(card.dataset.price);
+        
+        if (selectedPrice === 'all') {
+            // Afficher toutes les places
+            card.style.display = 'block';
+        } else {
+            const maxPrice = parseFloat(selectedPrice);
+            
+            // Afficher seulement si le prix est inférieur ou égal au filtre
+            if (placePrice <= maxPrice) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        }
+    });
+}
+
+/**
+ * Redirige vers la page de détails d'une place
+ * @param {string} placeId - ID de la place
+ */
+function viewPlaceDetails(placeId) {
+    console.log('👁️ Affichage des détails de la place:', placeId);
+    // Redirection vers la page de détails (à implémenter plus tard)
+    window.location.href = `place.html?id=${placeId}`;
+}
+
+
+
 
 /*============================================*/
 /*===== GESTION DES COOKIES ==================*/

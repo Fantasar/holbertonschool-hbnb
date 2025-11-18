@@ -15,8 +15,11 @@
             <a href="index.html">Home</a>
             <a href="add_review.html">Review</a>
             <a href="place.html">Place</a>
+            <a href="login.html" class="login-button" id="login-link">Login</a>
+            <button onclick="logoutUser()" class="logout-button" id="logout-button" style="display: none;">
+                Logout
+            </button>
         </nav>
-        <a href="login.html" class="login-button">Login</a>
     </header>
     <main>
         <section id="filter">
@@ -29,51 +32,14 @@
         <h1>Nos locations disponibles, pour vos weekend ...</h1>
         <section id="places-list">
             <!-- Différentes Carte de logements-->
-            <div class="place-card">
-                <img src="images/arcachon.jpg" alt="Appartement à Arcachon" class="place-img">
-                <h2>Appartement à Arcachon</h2>
-                <p> Charmant appartement près du port,pour ballade et moment de détente.</p>
-                <p class="prix">90€ / nuit</p>
-                <p class="couchage">4 personnes</p>
-                <button class="details-button">Plus d'infos</button>
-            </div>
-            <div class="place-card">
-                <img src="images/bordeaux.avif" alt="Maison à Bordeaux" class="place-img">
-                <h2>Maison à Bordeaux</h2>
-                <p> Maison situer dans quartier calme près des commerces, place de parking priver</p>
-                <p class="prix">105€ / nuit</p>
-                <p class="couchage">6 personnes</p>
-                <button class="details-button">Plus d'infos</button>
-            </div>
-            <div class="place-card">
-                <img src="images/agen.jpg" alt="Maison à Agen" class="place-img">
-                <h2>Maison à Agen</h2>
-                <p> Maison près du centre et de l'église, ballade et randonnés et barbecue</p>
-                <p class="prix">60€ / nuit</p>
-                <p class="couchage">8 personnes</p>
-                <button class="details-button">Plus d'infos</button>
-            </div>
-            <div class="place-card">
-                <img src="images/la_rochelle.jpg" alt="Appartement à La Rochelle" class="place-img">
-                <h2>Appartement à La Rochelle</h2>
-                <p> Charmant appartement près du vieux port, possédant un balcon, proche de tout les commerces.</p>
-                <p class="prix">75€ / nuit</p>
-                <p class="couchage">4 personnes</p>
-                <button class="details-button">Plus d'infos</button>
-            </div>
-                <div class="place-card">
-                <img src="images/limoges.jpg" alt="Appartement à Limoges" class="place-img">
-                <h2>Appartement à Limoges</h2>
-                <p> Appartement calmes, situés en centre ville, avec la ligne de bus à proximités.</p>
-                <p class="prix">65€ / nuit</p>
-                <p class="couchage">6 personnes</p>
-                <button class="details-button">Plus d'infos</button>
-            </div>
+            <p style="text-align: center; color: #666; padding: 50px;">
+                ⏳ Chargement des logements...
+            </p>
         </section>
     </main>
-    <script src="scripts.js"></script>
     <footer>
         <p>&copy; 2024 HBNB. All rights reserved.</p>
     </footer>
+    <script src="scripts.js"></script>
 </body>
 </html>
