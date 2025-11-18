@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restx import Api
+from flask_cors import CORS
 from app.extensions import bcrypt, db, jwt
 from app.api.v1.users import users_api as users_ns
 from app.api.v1.amenities import api as amenities_ns
@@ -18,7 +19,25 @@ from app.api.v1.users import admin_api as admin_ns
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    
+
+    # ========================================
+    # CONFIGURATION CORS - NOUVEAU CODE ICI
+    # ========================================
+    # Permet au frontend (port 5500) d'appeler l'API (port 5000)
+    CORS(app, resources={
+        r"/api/*": {  # Applique CORS à toutes les routes commençant par /api/
+            "origins": [
+                "http://localhost:5500",
+                "http://127.0.0.1:5500",
+                "http://localhost:5501",  # Au cas où tu changes de port
+            ],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True
+        }
+    })
+    # ========================================
+
     # Initialisation des extensions : chiffrement, gestion JWT et base de données
     bcrypt.init_app(app)
     jwt.init_app(app)
