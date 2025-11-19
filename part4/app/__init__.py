@@ -33,6 +33,7 @@ def create_app(config_class="config.DevelopmentConfig"):
             ],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
+            "expose_headers": ["Authorization"],
             "supports_credentials": True
         }
     })
