@@ -11,7 +11,8 @@ api = Namespace('reviews', description='Review operations')
 # Le champ rating doit être un nombre entier entre 1 et 5 (système d'étoiles)
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)')
+    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
+    'place_id': fields.String(required=True, description='ID of the place being reviewed')
 })
 
 
@@ -19,8 +20,8 @@ review_model = api.model('Review', {
 class ReviewList(Resource):
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @api.expect(review_model, validate=True)
     @jwt_required()  # Sécurisation: nécessite un token JWT valide pour accéder à cet endpoint
-    @api.expect(review_model)
     def post(self):
         """Enregistrer un nouvel avis"""
         review_data = request.get_json()
@@ -50,6 +51,7 @@ class ReviewList(Resource):
             new_review = facade.create_review(review_data)
             return new_review.to_dict(), 201
         except Exception as e:
+            print("ERREUR SERVEUR:", e)
             return {'error': str(e)}, 400
 
     @api.response(200, 'List of reviews retrieved successfully')

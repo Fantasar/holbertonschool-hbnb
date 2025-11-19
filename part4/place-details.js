@@ -5,9 +5,9 @@
 function getPlaceIdFromURL() {
     //Récupère les id du logement, stocker après ? dans l'url
     const params = new URLSearchParams(window.location.search);
-    const placeID = params.get('id');
-    console.log('Place ID récupéré:', placeID);
-    return placeID;
+    const placeId = params.get('id');
+    console.log('Place ID récupéré:', placeId);
+    return placeId;
 }
 
 /*============================================*/
@@ -83,7 +83,7 @@ async function fetchPlaceDetails(token, placeId) {
         const apiUrl = `http://localhost:5000/api/v1/places/${placeId}`;
         console.log('Envoi de la requête GET vers:', apiUrl);
 
-        //fetch() envoir la requête HTTP
+        //fetch() envoi la requête HTTP
         //await = on attend la réponse avant de continuer
         const response = await fetch(apiUrl, {
             method: 'GET',
@@ -106,7 +106,7 @@ async function fetchPlaceDetails(token, placeId) {
         console.log('Données du logement:', place);
 
         //Appelle de la fonction pour afficher les données
-        displayPlaceDetails(place);
+        return place;
         
     // === GESTION DES ERREURS ===
     
@@ -123,6 +123,7 @@ async function fetchPlaceDetails(token, placeId) {
                 <p>Détails : ${error.message}</p>
             </div>
         `;
+        return null;
     }
 }
 
@@ -161,7 +162,6 @@ function displayPlaceDetails(place) {
         }
     }
 
-
     // === CRÉATION DU HTML POUR LE LOGEMENT ===
     const placeDiv = document.createElement('div');
     placeDiv.className = 'place-details'; // Classe CSS
@@ -195,6 +195,8 @@ function displayPlaceDetails(place) {
         const reviewsSection = document.getElementById('reviews');
         reviewsSection.innerHTML = '<p>Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>';
     }
+
+    addReviewButton(place.id)
 }
 
 /*============================================*/
@@ -273,11 +275,43 @@ function generateStars(rating) {
     return stars;
 }
 
+
+/*============================================*/
+/*====== Bouton pour ajouter un avis  ========*/
+/*============================================*/
+
+function addReviewButton(placeId) {
+    const detailsSection = document.getElementById('place-details');
+
+    const buttonHTML = `
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="add_review.html?id=${placeId}" 
+               class="add-review-button"
+               style="background-color: #34967C; 
+                      color: white; 
+                      padding: 15px 30px; 
+                      text-decoration: none; 
+                      border-radius: 8px;
+                      display: inline-block;
+                      font-weight: bold;
+                      transition: all 0.3s ease;">
+                ✍️ Ajouter un avis sur ce logement
+            </a>
+        </div>
+    `;
+
+    if (detailsSection) {
+        detailsSection.insertAdjacentHTML('beforeend', buttonHTML);
+        console.log('Bouton "Ajouter un avis" créé avec ID:', placeId);
+    }
+}
+
+
 /*============================================*/
 /*============ Initialisation  ===============*/
 /*============================================*/
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('=== Chargement de la page place.html ===');
     
     // ÉTAPE 1 : On récupère l'ID du logement depuis l'URL
@@ -295,7 +329,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = checkAuthentication();
     
     // ÉTAPE 3 : On récupère et affiche les détails du logement
-    fetchPlaceDetails(token, placeId);
+    const place = await fetchPlaceDetails(token, placeId);
     
+    // ÉTAPE 4 : Si on a bien récupéré les données, les afficher
+    if (place) {
+        displayPlaceDetails(place);
+    }
+
     console.log('=== Initialisation terminée ===');
 });

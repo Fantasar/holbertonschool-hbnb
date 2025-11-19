@@ -467,6 +467,7 @@ function saveTokenToCookie(token) {
     // Sauvegarder le cookie
     // SameSite=Lax pour la sécurité
     document.cookie = `token=${token}; ${expires}; path=/; SameSite=Lax`;
+    console.log('🍪 Cookie créé:', document.cookie);
 }
 
 /**
